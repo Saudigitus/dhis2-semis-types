@@ -5,14 +5,8 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"POT-Creation-Date: 2024-11-14T08:45:55.670Z\n"
-"PO-Revision-Date: 2024-11-14T08:45:55.670Z\n"
-
-msgid "Hello {{name}}"
-msgstr "Hello {{name}}"
-
-msgid "Welcome to DHIS2!"
-msgstr "Welcome to DHIS2!"
+"POT-Creation-Date: 2024-11-14T12:33:36.940Z\n"
+"PO-Revision-Date: 2024-11-14T12:33:36.940Z\n"
 
 msgid "Select columns"
 msgstr "Select columns"
