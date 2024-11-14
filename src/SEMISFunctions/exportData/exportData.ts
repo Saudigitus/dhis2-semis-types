@@ -1,13 +1,15 @@
 import { ExportData } from "../../types/bulk/bulkOperations";
-import { getCommonSheetData } from "./commonData";
+import { getCommonSheetData } from "../../hooks/useGetCommonData/commonData";
 
 export function useExportData(props: ExportData) {
-    const { fileName, orgUnit, program, programStageIdToExport, eventFilters } = props
+    const { fileName, orgUnit, program, programStageIdToExport = 'enrollment', eventFilters } = props
     const { getData } = getCommonSheetData(props)
 
 
     async function exportData() {
-        await getData()
+        const data = await getData()
+
+
 
     }
 

@@ -1,5 +1,5 @@
-import { useGetEnrollmentData } from "../../hooks/enrollmentDetails/useGetEnrollmentDetails"
-import { useGetEvents } from "../../hooks/events/useGetEvents"
+import { useGetEnrollmentData } from "../enrollmentDetails/useGetEnrollmentDetails"
+import { useGetEvents } from "../events/useGetEvents"
 import { ExportData } from "../../types/bulk/bulkOperations"
 
 export function getCommonSheetData(props: ExportData) {
@@ -20,8 +20,7 @@ export function getCommonSheetData(props: ExportData) {
 
         const enrollmentDetails = await getEnrollmentDetails(events)
 
-        
-        console.log(enrollmentDetails)
+        return enrollmentDetails
     }
 
     return { getData }
