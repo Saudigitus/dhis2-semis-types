@@ -1,31 +1,13 @@
 import React from 'react'
-import { DataQuery } from '@dhis2/app-runtime'
-import i18n from '@dhis2/d2-i18n'
-import classes from './App.module.css'
+import { useExportData } from '../SEMISFunctions/exportData/exportData'
 
-const query = {
-    me: {
-        resource: 'me',
-    },
+function MyApp() {
+    const { exportData } = useExportData({ fileName: "teste", orgUnit: "Shc3qNhrPAz", orgUnitName: "Albion LBS", program: "wQaiD2V27Dp", programStageIdToExport: "Ljyrr3cktAr", registrationStage: "Ni2qsy2WJn4", })
+
+    return (
+        <div>
+            <button onClick={async () => await exportData()} >Click-me</button>
+        </div>
+    )
 }
-
-const MyApp = () => (
-    <div className={classes.container}>
-        <DataQuery query={query}>
-            {({ error, loading, data }) => {
-                if (error) return <span>ERROR</span>
-                if (loading) return <span>...</span>
-                return (
-                    <>
-                        <h1>
-                            {i18n.t('Hello {{name}}', { name: data.me.name })}
-                        </h1>
-                        <h3>{i18n.t('Welcome to DHIS2!')}</h3>
-                    </>
-                )
-            }}
-        </DataQuery>
-    </div>
-)
-
 export default MyApp
