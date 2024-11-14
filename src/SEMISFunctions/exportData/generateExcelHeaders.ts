@@ -1,7 +1,5 @@
-import { useRecoilValue } from "recoil";
-import { ProgramConfigState } from "../../schema/programSchema";
-import { getDataStoreKeys } from "../commons/dataStore/getDataStoreKeys"
-import { useParams } from "../../hooks";
+import { GenerateHeaders } from "../../types/bulk/bulkOperations";
+import { ProgramConfig } from "../../types/programConfig/ProgramConfig";
 
 export const dfHeaders = [
     {
@@ -21,26 +19,26 @@ export const dfHeaders = [
     }
 ]
 
-export function generateHeaders() {
-    const { registration } = getDataStoreKeys()
-    const { urlParamiters } = useParams()
-    const { sectionType } = urlParamiters()
-    const programConfigState = useRecoilValue(ProgramConfigState);
+export function generateHeaders(props: GenerateHeaders) {
+    const { programConfig, programStageIdToExport, registration, sectionType, socioEconomicsId, withSocioEconomics } = props
 
     function getHeaders() {
         let formatedHeaders: any[] = []
+        const colors = { [registration]: "FCE5CD", [socioEconomicsId]: "79B473" }
 
-        programConfigState.programStages.filter(x => {
-            if (x.id == registration.programStage) {
+        programConfig.programStages.filter(x => {
+            if (x.id == registration || (withSocioEconomics && x.id === socioEconomicsId)) {
 
                 let section: any = {
                     name: x.displayName,
-                    headers: [{
-                        header: 'School',
-                        key: 'school',
-                        width: 25,
-                    }],
-                    fill: 'FCE5CD'
+                    headers: [
+                        ...(x.id === registration ? [{
+                            header: 'School',
+                            key: 'school',
+                            width: 25,
+                        }] : [])
+                    ],
+                    fill: colors[x.id]
                 }
 
                 x.programStageDataElements.map((de) => {
@@ -57,7 +55,7 @@ export function generateHeaders() {
             }
         })
 
-        const att = programConfigState.programTrackedEntityAttributes.filter((att) => att.displayInList).map(x => {
+        const att = programConfig.programTrackedEntityAttributes.filter((att) => att.displayInList).map(x => {
             return {
                 header: x.trackedEntityAttribute.displayName,
                 key: x.trackedEntityAttribute.id,
@@ -77,10 +75,10 @@ export function generateHeaders() {
     }
 
     function getAllowedMajorHeaders() {
-        
+
         return [
             (sectionType ?? '').substring(0, 1).toUpperCase() + (sectionType ?? '').substring(1, (sectionType ?? '').length) + ' profile',
-            programConfigState.programStages.find(x => x.id == registration.programStage)?.displayName,
+            programConfig.programStages.find(x => x.id == registration)?.displayName,
             'Attendance', 'Ids'
         ]
     }
