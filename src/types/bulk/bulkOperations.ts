@@ -1,5 +1,12 @@
 import { ProgramConfig } from "../programConfig/ProgramConfig"
 
+enum modules {
+    attendance = "attendance",
+    final_result = "final-result",
+    enrollment = "enrollment",
+    performance = "performance",
+}
+
 /**
  * Description placeholder
  *
@@ -13,7 +20,7 @@ interface ExportData {
      * @type {string}
      */
     fileName: string
-    
+
     /**
      * The id of the program in which the data will be fetched
      *
@@ -29,13 +36,17 @@ interface ExportData {
     orgUnit: string
 
     /**
-     * The id of the programme stage to which you want to export the data. 
+     * The id of the programme stage to which you want to export the data.
+     * 
+     * If this variavel is null, the program will only export data of the enrollment module,
+     * 
+     * wich is student profile, enrollment details and socio economics data 
      * 
      * Eg: if you want to export attendance data, send the id of the attendance programme stage, and so on.
      *
-     * @type {string}
+     * @type {?string}
      */
-    programStageIdToExport: string
+    programStageIdToExport?: string
 
     /**
      * The array of filters applied to the headers (class and grid)
@@ -75,7 +86,7 @@ interface ExportData {
      * @type {?string}
      */
     socioEconomicsId?: string
-    
+
     /**
      * selected section type name
      *
@@ -87,12 +98,28 @@ interface ExportData {
      * Depending on the module, the data is exported with a focus on just one programme stage,
      * 
      * so this variable is intended to receive the name of the section that will contain this data.
-     * 
-     * If no value is passed, the section will have the display name of the program stage
      *
      * @type {?string}
      */
-    dataName?: string
+    module: "attendance" | "final-result" | "enrollment" | "performance",
+
+    /**
+     * if you want to export attendace data you need to set a date range, so, this variable will
+     * 
+     * get the start date in this formtat: yyyy-MM-dd
+     *
+     * @type {?string}
+     */
+    startDate?: string
+
+    /**
+     * if you want to export attendace data you need to set a date range, so, this variable will
+     * 
+     * get the end date in this formtat: yyyy-MM-dd
+     *
+     * @type {?string}
+     */
+    endDate?: string
 }
 
 interface GenerateHeaders {
@@ -104,4 +131,4 @@ interface GenerateHeaders {
     sectionType: string
 }
 
-export { ExportData, GenerateHeaders }
+export { ExportData, GenerateHeaders, modules }

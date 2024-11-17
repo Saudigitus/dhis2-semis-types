@@ -8,7 +8,7 @@ export function useGetEnrollmentData(props: ExportData) {
     const { getTei } = useGetTei()
     const { getEvents } = useGetEvents()
     const [error, setError] = useState<boolean>(false)
-    const { orgUnitName, orgUnit, program, registrationStage, eventFilters, withSocioEconomics, socioEconomicsId } = props
+    const { orgUnitName, orgUnit, program, registrationStage, eventFilters, withSocioEconomics, socioEconomicsId, programStageIdToExport } = props
 
     const getEnrollmentDetails = async (events: any) => {
         const trackedEntityIds = events?.map((x: { trackedEntity: string }) => x.trackedEntity).join(';')
@@ -35,7 +35,7 @@ export function useGetEnrollmentData(props: ExportData) {
                             orgUnit: orgUnit
                         })
 
-                        if (withSocioEconomics) {
+                        if (withSocioEconomics || !programStageIdToExport) {
                             socioEconomiscData = await getEvents({
                                 program: program,
                                 programStage: socioEconomicsId as unknown as string,

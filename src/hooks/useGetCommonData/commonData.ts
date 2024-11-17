@@ -4,17 +4,18 @@ import { ExportData } from "../../types/bulk/bulkOperations"
 
 export function getCommonSheetData(props: ExportData) {
     const { getEvents } = useGetEvents()
-    const { orgUnit, program, programStageIdToExport, eventFilters = [] } = props
+    const { orgUnit, program, programStageIdToExport, eventFilters = [], registrationStage } = props
     const { getEnrollmentDetails } = useGetEnrollmentData({ ...props })
 
     async function getData() {
         const events = await getEvents({
             program,
-            programStage: programStageIdToExport,
+            programStage: registrationStage,
             fields: "trackedEntity,enrollment,orgUnit,program",
             filter: eventFilters,
             orgUnit,
-            paging: false,
+            paging: true,
+            pageSize: 5,
             ouMode: 'SELECTED'
         })
 

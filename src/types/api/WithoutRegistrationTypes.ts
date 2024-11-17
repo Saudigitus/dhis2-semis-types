@@ -9,7 +9,7 @@ interface EventQueryProps {
     ouMode?: string
     program: string
     order?: string
-    programStage: string
+    programStage?: string
     orgUnit?: string
     filter?: string[]
     filterAttributes?: string[]

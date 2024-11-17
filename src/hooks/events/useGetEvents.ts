@@ -19,7 +19,7 @@ export function useGetEvents() {
         )).then((resp: any) => {
             return resp.results?.instances
         }).catch((resp: any) => {
-
+            
         })
     }
 
