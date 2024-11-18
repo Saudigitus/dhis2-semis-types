@@ -6,11 +6,11 @@ import { RulesEngineWrapperProps } from '../../../types/programRules/RulesEngine
 
 export default function RulesEngineWrapper(props: RulesEngineWrapperProps) {
     const { program, columns } = props;
-    const { loading, error } = FetchEngineVariables()
-    const { initialize } = initializeRulesEngine("")
+    const { initialize } = initializeRulesEngine()
+    const { loading, error } = FetchEngineVariables(program)
 
     useEffect(() => {
-        initialize([])
+        initialize(columns)
     }, [loading, error])
 
     if (loading) {

@@ -8,12 +8,12 @@ import { ProgramRuleConfig } from "../../types/programRules/ProgramRulesTypes";
 const PROGRAM_RULES_QUERY = {
     results: {
         resource: "programRules",
-        params: {
+        params: ({ program }: any) => ({
             paging: false,
-            // filter: ({ program }: any) => `program.id:eq:${program}`,
+            filter: [`program.id:eq:${program}`],
             fields: "id,displayName,condition,description,program[id],programStage[id],priority,programRuleActions[id,content,location,data,programRuleActionType,programStageSection[id],dataElement[id],trackedEntityAttribute[id],option[id],optionGroup[id],programIndicator[id],programStage[id]]",
 
-        }
+        })
     }
 }
 
@@ -22,13 +22,17 @@ type ProgramRulesQueryResponse = {
         programRules: ProgramRuleConfig[]
     }
 }
-// program.id:eq
-export function useGetProgramRules() {
+
+export function useGetProgramRules(program: string) {
+    console.log(program)
     const { hide, show } = useShowAlerts()
     const [error, setError] = useState<boolean>(false)
     const [, setProgramRulesConfigState] = useRecoilState(ProgramRulesConfigState);
 
     const { data, loading: loadingPRules, refetch } = useDataQuery<ProgramRulesQueryResponse>(PROGRAM_RULES_QUERY, {
+        variables: {
+            program: program
+        },
         onError(error: { message: string }) {
             show({
                 message: `${("Could not get program rules")}: ${error?.message}`,

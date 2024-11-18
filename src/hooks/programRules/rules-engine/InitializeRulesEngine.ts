@@ -6,9 +6,9 @@ import { FormattedPRulesType } from "../../../types/programRules/FormattedPRules
 import { useFormatProgramRulesVariables } from "../useFormatProgramRulesVariables"
 import { getFunctionExpression, getValueTypeVariable, removeSpecialCharacters, replaceConditionVariables } from "./RulesEngine"
 
-export const initializeRulesEngine = (program: string) => {
-    const { programRules } = useFormatProgramRules(program)
-    const { programRulesVariables } = useFormatProgramRulesVariables(program)
+export const initializeRulesEngine = () => {
+    const { programRules } = useFormatProgramRules()
+    const { programRulesVariables } = useFormatProgramRulesVariables()
     const [newProgramRules, setnewProgramRules] = useRecoilState(ProgramRulesFormatedState)
 
     function initialize(columns: CustomAttributeProps[]) {

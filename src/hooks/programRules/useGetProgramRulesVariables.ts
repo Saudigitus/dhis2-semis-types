@@ -8,12 +8,12 @@ import { ProgramRuleVariableConfig } from "../../types/programRules/ProgramRules
 const PROGRAM_RULES_VARIABLES_QUERY = {
     results: {
         resource: "programRuleVariables",
-        params: {
+        params: ({ program }: any) => ({
             paging: false,
-            // filter: ({ program }: any) => `program.id:eq:${program}`,
+            filter: [`program.id:eq:${program}`],
             fields: "name,dataElement,trackedEntityAttribute,program[id]",
 
-        }
+        })
     }
 }
 
@@ -23,12 +23,15 @@ type ProgramRulesVariablesQueryResponse = {
     }
 }
 
-export function useGetProgramRulesVariables() {
+export function useGetProgramRulesVariables(program: string) {
     const { hide, show } = useShowAlerts()
     const [error, setError] = useState<boolean>(false)
     const [, setProgramRuleVariablesConfigState] = useRecoilState(ProgramRulesVariablesConfigState);
 
     const { data, loading: loadingPRulesVariables, refetch } = useDataQuery<ProgramRulesVariablesQueryResponse>(PROGRAM_RULES_VARIABLES_QUERY, {
+        variables: {
+            program
+        },
         onError(error: { message: string }) {
             show({
                 message: `${("Could not get program rules variables")}: ${error.message}`,
