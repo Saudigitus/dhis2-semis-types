@@ -9,7 +9,7 @@ export const dfHeaders = [
     },
     {
         "header": "Tracked Entity Id",
-        "key": "studentId",
+        "key": "trackedEntity",
         "width": 25
     },
     {

@@ -1,3 +1,4 @@
+import { DataStoreRecord } from "../dataStore/DataStoreConfig"
 import { ProgramConfig } from "../programConfig/ProgramConfig"
 
 enum modules {
@@ -22,13 +23,6 @@ interface ExportData {
     fileName: string
 
     /**
-     * The id of the program in which the data will be fetched
-     *
-     * @type {string}
-     */
-    program: string
-
-    /**
      * The id of the organisationa unit from which the data will be retrieved
      *
      * @type {string}
@@ -36,17 +30,11 @@ interface ExportData {
     orgUnit: string
 
     /**
-     * The id of the programme stage to which you want to export the data.
+     * Array of program stages id to export data
      * 
-     * If this variavel is null, the program will only export data of the enrollment module,
-     * 
-     * wich is student profile, enrollment details and socio economics data 
-     * 
-     * Eg: if you want to export attendance data, send the id of the attendance programme stage, and so on.
-     *
-     * @type {?string}
+     * @type {string[]}
      */
-    programStageIdToExport?: string
+    stagesToExport: string[]
 
     /**
      * The array of filters applied to the headers (class and grid)
@@ -63,15 +51,6 @@ interface ExportData {
     orgUnitName: string
 
     /**
-     * All exported files, regardless of the module, will always contain registration data,
-     * 
-     * so you should send the id of that programstage in this variable.
-     *
-     * @type {string}
-     */
-    registrationStage: string
-
-    /**
      * The data of the socio-economics partner is not mandatory, if you want this data 
      * 
      * in your exported file you must set this v to true.
@@ -79,13 +58,6 @@ interface ExportData {
      * @type {?boolean}
      */
     withSocioEconomics?: boolean
-
-    /**
-     * socio economics program stage Id
-     *
-     * @type {?string}
-     */
-    socioEconomicsId?: string
 
     /**
      * selected section type name
@@ -120,6 +92,13 @@ interface ExportData {
      * @type {?string}
      */
     endDate?: string
+
+    /**
+     * Settings saved at data store
+     *
+     * @type {DataStoreRecord}
+     */
+    seletecSectionDataStore?: DataStoreRecord
 }
 
 interface GenerateHeaders {

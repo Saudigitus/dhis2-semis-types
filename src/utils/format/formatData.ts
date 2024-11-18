@@ -1,6 +1,8 @@
 import { DataValuesProps } from "../../types/api/WithoutRegistrationTypes"
 import { attributesProps } from "../../types/api/WithRegistrationTypes"
 import { RowsDataProps } from "../../types/common/FormatRowsDataProps"
+import { type AttendanceFormaterProps } from "../../types/attendance/attendaceFormaterProps"
+import { Attendance } from "../../types/dataStore/DataStoreConfig"
 
 export function attributes(data: attributesProps[]): RowsDataProps {
     const localData: RowsDataProps = {}
@@ -10,10 +12,29 @@ export function attributes(data: attributesProps[]): RowsDataProps {
     return localData
 }
 
-export function dataValues(data: DataValuesProps[]): RowsDataProps {
+export function dataValues(data: DataValuesProps[], stageId?: string): RowsDataProps {
     const localData: RowsDataProps = {}
+
     for (const dataElement of data) {
-        localData[dataElement.dataElement] = dataElement.value
+        localData[`${dataElement.dataElement}${stageId ? "-" + stageId : ""}`] = dataElement.value
     }
     return localData
 }
+
+export function attendanceFormater(event: AttendanceFormaterProps, attendanceConfig: Attendance): RowsDataProps {
+    const localData: RowsDataProps = {}
+    let status: string = ""
+
+    for (const dataValue of event.dataValues) {
+        if (attendanceConfig?.status === dataValue.dataElement) {
+            status = dataValue.value
+        }
+    }
+
+    localData[event.occurredAt?.split("T")?.[0]] = status
+
+    return localData
+}
+
+
+
