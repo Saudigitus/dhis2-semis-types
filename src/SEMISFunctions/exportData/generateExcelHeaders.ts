@@ -1,5 +1,5 @@
 import { GenerateHeaders } from "../../types/bulk/bulkOperations";
-import { ProgramConfig } from "../../types/programConfig/ProgramConfig";
+import { generateAttendanceDays } from "../../utils/attendance/generateAttendanceDays";
 
 export const dfHeaders = [
     {
@@ -20,32 +20,55 @@ export const dfHeaders = [
 ]
 
 export function generateHeaders(props: GenerateHeaders) {
-    const { programConfig, programStageIdToExport, registration, sectionType, socioEconomicsId, withSocioEconomics } = props
+    const { programConfig, stagesToExport, sectionType, seletecSectionDataStore, withSocioEconomics, unavailableSchoolDays, endDate, startDate } = props
+    const { getValidDaysToExport } = generateAttendanceDays({ unavailableDays: unavailableSchoolDays as unknown as (args: Date) => boolean })
 
     function getHeaders() {
         let formatedHeaders: any[] = []
-        const colors = { [registration]: "FCE5CD", [socioEconomicsId]: "79B473" }
+        const stageHeaders = [seletecSectionDataStore.registration.programStage, ...(withSocioEconomics ? [seletecSectionDataStore["socio-economics"].programStage] : []), ...stagesToExport]
+        const colors = {
+            [seletecSectionDataStore.registration.programStage]: "FCE5CD",
+            [seletecSectionDataStore["socio-economics"].programStage]: "79B473"
+        }
 
-        programConfig.programStages.filter(x => {
-            if (x.id == registration || (withSocioEconomics && x.id === socioEconomicsId)) {
+        for (const stageId of stageHeaders) {
+            const currStage = programConfig?.programStages?.find(x => x.id == stageId)
+
+            if (stageId === seletecSectionDataStore.attendance.programStage) {
+                let section: any = {
+                    name: currStage?.displayName,
+                    headers: [
+                        ...getValidDaysToExport(new Date(startDate as unknown as string), new Date(endDate as unknown as string)).map((day) => {
+                            return {
+                                header: day.date,
+                                key: day.date,
+                                disabled: !day.schoolDay,
+                                width: 25,
+                            }
+                        })
+                    ]
+                }
+
+                formatedHeaders.push(section)
+            } else {
 
                 let section: any = {
-                    name: x.displayName,
+                    name: currStage?.displayName,
                     headers: [
-                        ...(x.id === registration ? [{
+                        ...(currStage?.id === seletecSectionDataStore.registration.programStage ? [{
                             header: 'School',
                             key: 'school',
                             width: 25,
                         }] : [])
                     ],
-                    fill: colors[x.id]
+                    fill: colors[(currStage as unknown as any)?.id]
                 }
 
-                x.programStageDataElements.map((de) => {
+                currStage?.programStageDataElements.map((de) => {
                     section = {
                         ...section, headers: [...section.headers, {
                             header: de?.dataElement.displayName,
-                            key: de?.dataElement.id,
+                            key: `${de?.dataElement?.id}_${stageId}`,
                             width: 25,
                         }]
                     }
@@ -53,12 +76,12 @@ export function generateHeaders(props: GenerateHeaders) {
 
                 formatedHeaders.push(section)
             }
-        })
+        }
 
-        const att = programConfig.programTrackedEntityAttributes.filter((att) => att.displayInList).map(x => {
+        const att = programConfig?.programTrackedEntityAttributes?.filter((att) => att.displayInList).map(x => {
             return {
                 header: x.trackedEntityAttribute.displayName,
-                key: x.trackedEntityAttribute.id,
+                key: x.trackedEntityAttribute?.id,
                 width: 25,
             }
         })
@@ -68,7 +91,12 @@ export function generateHeaders(props: GenerateHeaders) {
                 header: 'Ref',
                 key: 'ref',
                 width: 25,
-            }, ...att], fill: 'D9EAD3'
+            }, ...(att || [])], fill: 'D9EAD3'
+        })
+
+        formatedHeaders.push({
+            name: "Ids",
+            headers: dfHeaders
         })
 
         return formatedHeaders
@@ -78,7 +106,7 @@ export function generateHeaders(props: GenerateHeaders) {
 
         return [
             (sectionType ?? '').substring(0, 1).toUpperCase() + (sectionType ?? '').substring(1, (sectionType ?? '').length) + ' profile',
-            programConfig.programStages.find(x => x.id == registration)?.displayName,
+            programConfig.programStages.find(x => x.id == seletecSectionDataStore.registration.programStage)?.displayName,
             'Attendance', 'Ids'
         ]
     }

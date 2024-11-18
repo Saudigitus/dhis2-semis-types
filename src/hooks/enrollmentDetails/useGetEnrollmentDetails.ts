@@ -48,7 +48,6 @@ export function useGetEnrollmentData(props: ExportData) {
                             })
                         }
 
-
                         const currEnrollmentRegistration = registrationData?.find((x: any) => x.enrollment === enrollment)
                         const currEnrollmentSocioEconomics = socioEconomiscData?.find((x: any) => x.enrollment === enrollment)
 
@@ -60,8 +59,8 @@ export function useGetEnrollmentData(props: ExportData) {
                             enrollment: enrollment,
                             trackedEntity: tei.trackedEntity,
                             ...attributes(tei?.attributes ?? []),
-                            ...dataValues(currEnrollmentRegistration?.dataValues ?? []),
-                            ...dataValues(currEnrollmentSocioEconomics?.dataValues ?? []),
+                            ...dataValues(currEnrollmentRegistration?.dataValues ?? [], seletecSectionDataStore?.registration.programStage as unknown as string),
+                            ...dataValues(currEnrollmentSocioEconomics?.dataValues ?? [], seletecSectionDataStore?.['socio-economics'].programStage as unknown as string),
                         }]
                     }
 

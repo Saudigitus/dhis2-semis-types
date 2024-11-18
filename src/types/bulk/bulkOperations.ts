@@ -99,15 +99,31 @@ interface ExportData {
      * @type {DataStoreRecord}
      */
     seletecSectionDataStore?: DataStoreRecord
+
+    /**
+    * Program configurations
+    *
+    * @type {ProgramConfig}
+    */
+    programConfig: ProgramConfig
+
+    /**
+    * function tha chekcs if the given date is school day or no
+    *
+    * @type {function}
+    */
+    unavailableSchoolDays?: (date: Date) => boolean
 }
 
 interface GenerateHeaders {
-    programStageIdToExport: string
-    socioEconomicsId: string
+    stagesToExport: string[]
+    seletecSectionDataStore: DataStoreRecord
     withSocioEconomics: boolean
     programConfig: ProgramConfig
-    registration: string
     sectionType: string
+    unavailableSchoolDays?: (date: Date) => boolean
+    startDate?: string
+    endDate?: string
 }
 
 export { ExportData, GenerateHeaders, modules }
