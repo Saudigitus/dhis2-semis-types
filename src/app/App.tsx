@@ -1,6 +1,5 @@
 import React from 'react'
 import classes from './App.module.css'
-import DashboardCard from "../semis-ui/components/dashboardCard/dashboardCard"
 import { Router } from '../routes'
 
 
