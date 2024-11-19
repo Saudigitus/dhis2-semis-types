@@ -3,11 +3,11 @@ import { CustomAttributeProps } from "../variables/AttributeColumns"
 type RulesType = "programStage" | "programStageSection" | "attributesSection"
 
 interface RulesEngineProps {
+    type: RulesType
     variables: any[]
     programStage?: string
     formatKeyValueType?: any,
     values: Record<string, any>
-    type: RulesType
 }
 
 interface RulesEngineWrapperProps {

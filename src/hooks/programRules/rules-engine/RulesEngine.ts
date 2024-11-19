@@ -8,14 +8,16 @@ import { ProgramRulesFormatedState } from "../../../schema/programRulesFormated"
 import { compareStringByLabel } from "../../../utils/programRules/sortStringsByLabel";
 
 
-
-export const CustomDhis2RulesEngine = (props: RulesEngineProps) => {
+export const RulesEngine = (props: RulesEngineProps) => {
     const getOptionGroups = useRecoilValue(OptionGroupsConfigState)
     const newProgramRules = useRecoilValue(ProgramRulesFormatedState)
     const [updatedVariables, setupdatedVariables] = useState<any>([])
     const orgUnitsGroups = useRecoilValue(OrgUnitsGroupsConfigState)
     const { variables = [], values, type, formatKeyValueType, programStage } = props
 
+    console.log(variables)
+    console.log(newProgramRules)
+    console.log(programStage)
     useEffect(() => {
         if (updatedVariables.length === 0) {
             setupdatedVariables([...variables])
@@ -66,9 +68,12 @@ export const CustomDhis2RulesEngine = (props: RulesEngineProps) => {
 
     // apply rules to variables
     function applyRulesToVariable(variable: any) {
-        const newProgramRulesFiltered = programStage ? newProgramRules.filter(x => x.programStage === programStage) : newProgramRules.filter(x => x.variable === variable.name)
+        const newProgramRulesFiltered = newProgramRules.filter(x => x.variable === variable.name)
+        // const newProgramRulesFiltered = programStage ? newProgramRules.filter(x => x.programStage === programStage) : newProgramRules.filter(x => x.variable === variable.name)
 
+        console.log(newProgramRulesFiltered, variable)
         for (const programRule of newProgramRulesFiltered || []) {
+            console.log(programRule, 40404)
             try {
                 switch (programRule.type) {
                     case "attribute":

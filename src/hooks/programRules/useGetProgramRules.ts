@@ -24,7 +24,6 @@ type ProgramRulesQueryResponse = {
 }
 
 export function useGetProgramRules(program: string) {
-    console.log(program)
     const { hide, show } = useShowAlerts()
     const [error, setError] = useState<boolean>(false)
     const [, setProgramRulesConfigState] = useRecoilState(ProgramRulesConfigState);
