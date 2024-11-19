@@ -5,54 +5,57 @@ import { isDateFormatValid } from "../../utils/format/checkDateFormat";
 import { useGetEvents } from "../../hooks/events/useGetEvents";
 import { formatSheetData } from "../../utils/format/formatSheetData";
 import { DataStoreRecord } from "../../types/dataStore/DataStoreConfig";
-import { generateHeaders } from './generateExcelHeaders';
+import { generateHeaders } from '../../hooks/excelHeaders/generateExcelHeaders';
+import { gererateFile } from '../../hooks/dataExporter/tableExporter';
 
 export function useExportData(props: ExportData) {
-    const { programConfig, orgUnit, stagesToExport, module, endDate, startDate, seletecSectionDataStore = {} as unknown as DataStoreRecord, withSocioEconomics = false, sectionType } = props
-    const { getData } = getCommonSheetData(props)
     const [error, setError] = useState<any>(null)
+    const { getData } = getCommonSheetData(props)
     const { getEvents, error: eventsError } = useGetEvents()
-    const { getHeaders } = generateHeaders({ programConfig, stagesToExport, seletecSectionDataStore, sectionType, withSocioEconomics, endDate, startDate })
+    const { programConfig, unavailableSchoolDays, orgUnit, stagesToExport, module, endDate, startDate, seletedSectionDataStore = {} as unknown as DataStoreRecord, withSocioEconomics = false, sectionType } = props
+    const { ExcelGenerator } = gererateFile({ unavailableDays: unavailableSchoolDays as unknown as (date: Date) => boolean })
+    const { getHeaders } = generateHeaders({ programConfig, stagesToExport, seletedSectionDataStore, sectionType, withSocioEconomics, endDate, startDate })
 
     async function exportData() {
         if (module === modules.attendance && (!isDateFormatValid(endDate as unknown as string) || !isDateFormatValid(startDate as unknown as string))) {
             setError('The date format is not correct, the expected date format is: yyyy-MM-dd')
         } else {
-            // let data = await getData()
+            let data = await getData()
 
-            // if (module != modules.enrollment) {
+            if (module != modules.enrollment) {
 
-            //     for (let teisCounter = 0; teisCounter < data.length; teisCounter++) {
-            //         for (let a = 0; a < stagesToExport.length; a++) {
+                for (let teisCounter = 0; teisCounter < data.length; teisCounter++) {
+                    for (let a = 0; a < stagesToExport.length; a++) {
 
-            //             await getEvents({
-            //                 program: seletecSectionDataStore?.program as unknown as string,
-            //                 ...(module === modules.attendance ? {
-            //                     occurredAfter: startDate,
-            //                     occurredBefore: endDate
-            //                 } : {}),
-            //                 orgUnit,
-            //                 ouMode: "SELECTED",
-            //                 programStage: stagesToExport[a],
-            //                 fields: "event,trackedEntity,occurredAt,enrollment,dataValues[dataElement,value]",
-            //                 trackedEntity: data[teisCounter].trackedEntity,
-            //             }).then((resp) => {
+                        await getEvents({
+                            program: seletedSectionDataStore?.program as unknown as string,
+                            ...(module === modules.attendance ? {
+                                occurredAfter: startDate,
+                                occurredBefore: endDate
+                            } : {}),
+                            orgUnit,
+                            ouMode: "SELECTED",
+                            programStage: stagesToExport[a],
+                            fields: "event,trackedEntity,occurredAt,enrollment,dataValues[dataElement,value]",
+                            trackedEntity: data[teisCounter].trackedEntity,
+                        }).then((resp) => {
 
-            //                 const dataValues = resp?.find((x: any) => x.enrollment === data[teisCounter].enrollment)
-            //                 data[teisCounter] = {
-            //                     ...data[teisCounter], ...formatSheetData({
-            //                         module: module,
-            //                         stageId: stagesToExport[a],
-            //                         dataV: dataValues,
-            //                         dataStore: seletecSectionDataStore as unknown as DataStoreRecord
-            //                     })
-            //                 }
-            //             }).catch((error) => {
-            //                 setError(error)
-            //             })
-            //         }
-            //     }
-            // }
+                            const dataValues = resp?.find((x: any) => x.enrollment === data[teisCounter].enrollment)
+                            data[teisCounter] = {
+                                ...data[teisCounter], ...formatSheetData({
+                                    module: module,
+                                    stageId: stagesToExport[a],
+                                    dataV: dataValues,
+                                    dataStore: seletedSectionDataStore as unknown as DataStoreRecord
+                                })
+                            }
+                        }).catch((error) => {
+                            setError(error)
+                        })
+                    }
+                }
+            }
+
         }
         console.log(getHeaders())
     }

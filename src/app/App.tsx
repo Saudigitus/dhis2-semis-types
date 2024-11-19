@@ -15,7 +15,7 @@ function MyApp() {
         eventFilters: [`iDSrFrrVgmX:in:2023`],
         startDate: '2024-11-16',
         endDate: "2024-11-21",
-        seletecSectionDataStore: student,
+        seletedSectionDataStore: student,
         programConfig,
     })
 

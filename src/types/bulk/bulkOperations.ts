@@ -98,7 +98,7 @@ interface ExportData {
      *
      * @type {DataStoreRecord}
      */
-    seletecSectionDataStore?: DataStoreRecord
+    seletedSectionDataStore?: DataStoreRecord
 
     /**
     * Program configurations
@@ -117,7 +117,7 @@ interface ExportData {
 
 interface GenerateHeaders {
     stagesToExport: string[]
-    seletecSectionDataStore: DataStoreRecord
+    seletedSectionDataStore: DataStoreRecord
     withSocioEconomics: boolean
     programConfig: ProgramConfig
     sectionType: string

@@ -20,21 +20,21 @@ export const dfHeaders = [
 ]
 
 export function generateHeaders(props: GenerateHeaders) {
-    const { programConfig, stagesToExport, sectionType, seletecSectionDataStore, withSocioEconomics, unavailableSchoolDays, endDate, startDate } = props
+    const { programConfig, stagesToExport, sectionType, seletedSectionDataStore, withSocioEconomics, unavailableSchoolDays, endDate, startDate } = props
     const { getValidDaysToExport } = generateAttendanceDays({ unavailableDays: unavailableSchoolDays as unknown as (args: Date) => boolean })
 
     function getHeaders() {
         let formatedHeaders: any[] = []
-        const stageHeaders = [seletecSectionDataStore.registration.programStage, ...(withSocioEconomics ? [seletecSectionDataStore["socio-economics"].programStage] : []), ...stagesToExport]
+        const stageHeaders = [seletedSectionDataStore.registration.programStage, ...(withSocioEconomics ? [seletedSectionDataStore["socio-economics"].programStage] : []), ...stagesToExport]
         const colors = {
-            [seletecSectionDataStore.registration.programStage]: "FCE5CD",
-            [seletecSectionDataStore["socio-economics"].programStage]: "79B473"
+            [seletedSectionDataStore.registration.programStage]: "FCE5CD",
+            [seletedSectionDataStore["socio-economics"].programStage]: "79B473"
         }
 
         for (const stageId of stageHeaders) {
             const currStage = programConfig?.programStages?.find(x => x.id == stageId)
 
-            if (stageId === seletecSectionDataStore.attendance.programStage) {
+            if (stageId === seletedSectionDataStore.attendance.programStage) {
                 let section: any = {
                     name: currStage?.displayName,
                     headers: [
@@ -55,7 +55,7 @@ export function generateHeaders(props: GenerateHeaders) {
                 let section: any = {
                     name: currStage?.displayName,
                     headers: [
-                        ...(currStage?.id === seletecSectionDataStore.registration.programStage ? [{
+                        ...(currStage?.id === seletedSectionDataStore.registration.programStage ? [{
                             header: 'School',
                             key: 'school',
                             width: 25,
@@ -106,7 +106,7 @@ export function generateHeaders(props: GenerateHeaders) {
 
         return [
             (sectionType ?? '').substring(0, 1).toUpperCase() + (sectionType ?? '').substring(1, (sectionType ?? '').length) + ' profile',
-            programConfig.programStages.find(x => x.id == seletecSectionDataStore.registration.programStage)?.displayName,
+            programConfig.programStages.find(x => x.id == seletedSectionDataStore.registration.programStage)?.displayName,
             'Attendance', 'Ids'
         ]
     }
