@@ -1,16 +1,17 @@
 import React, { useEffect } from 'react'
-import { useExportData } from '../SEMISFunctions/exportData/exportData'
 import student from '../utils/constants/student.json'
 import { useGetProgramConfig } from '../hooks/programConfig/useGetprogramConfig'
+import { useExportData } from '../hooks/bulkExport/exportData'
 
 function MyApp() {
     const { getProgram, programConfig } = useGetProgramConfig()
+
     const { exportData } = useExportData({
-        fileName: "teste",
+        fileName: "test33e",
         orgUnit: "Shc3qNhrPAz",
         orgUnitName: "Albion LBS",
-        stagesToExport: [student.attendance.programStage],
-        module: "attendance",
+        stagesToExport: [student.registration.programStage],
+        module: "enrollment",
         sectionType: "student",
         eventFilters: [`iDSrFrrVgmX:in:2023`],
         startDate: '2024-11-16',
@@ -22,6 +23,7 @@ function MyApp() {
     useEffect(() => {
         void getProgram(student.program)
     }, [])
+
     return (
         <div>
             <button onClick={async () => await exportData()} >Click-me</button>

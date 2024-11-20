@@ -51,9 +51,13 @@ interface ExportData {
     orgUnitName: string
 
     /**
-     * The data of the socio-economics partner is not mandatory, if you want this data 
+     * The data of the socio-economics stge is not mandatory, if you want this data 
      * 
-     * in your exported file you must set this v to true.
+     * in your exported file you must set this variable to true. 
+     * 
+     * This does not apply to the enrollment module. In the enrollment module, the 
+     * 
+     * values for this stage will always be exported
      *
      * @type {?boolean}
      */
@@ -124,6 +128,17 @@ interface GenerateHeaders {
     unavailableSchoolDays?: (date: Date) => boolean
     startDate?: string
     endDate?: string
+    module: string
 }
 
-export { ExportData, GenerateHeaders, modules }
+interface excelProps {
+    headers: any[]
+    rows: any[]
+    filters: any
+    fileName: string
+    metadata: any[]
+    module: string
+    ids: string[]
+}
+
+export { ExportData, GenerateHeaders, modules, excelProps }

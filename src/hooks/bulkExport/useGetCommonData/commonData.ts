@@ -1,6 +1,6 @@
-import { useGetEnrollmentData } from "../enrollmentDetails/useGetEnrollmentDetails"
-import { useGetEvents } from "../events/useGetEvents"
-import { ExportData } from "../../types/bulk/bulkOperations"
+import { useGetEnrollmentData } from "../../enrollmentDetails/useGetEnrollmentDetails"
+import { useGetEvents } from "../../events/useGetEvents"
+import { ExportData } from "../../../types/bulk/bulkOperations"
 
 export function getCommonSheetData(props: ExportData) {
     const { getEvents } = useGetEvents()
@@ -15,7 +15,7 @@ export function getCommonSheetData(props: ExportData) {
             filter: eventFilters,
             orgUnit,
             skipPaging: false,
-            pageSize: 5,
+            pageSize: 2,
             page: 1,
             ouMode: 'SELECTED',
             order: seletedSectionDataStore?.defaults.defaultOrder

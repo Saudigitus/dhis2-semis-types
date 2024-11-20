@@ -1,25 +1,34 @@
 import { useState } from 'react'
 import { ExportData, modules } from "../../types/bulk/bulkOperations";
-import { getCommonSheetData } from "../../hooks/useGetCommonData/commonData";
 import { isDateFormatValid } from "../../utils/format/checkDateFormat";
-import { useGetEvents } from "../../hooks/events/useGetEvents";
+import { useGetEvents } from "../events/useGetEvents";
 import { formatSheetData } from "../../utils/format/formatSheetData";
 import { DataStoreRecord } from "../../types/dataStore/DataStoreConfig";
-import { generateHeaders } from '../../hooks/excelHeaders/generateExcelHeaders';
-import { gererateFile } from '../../hooks/dataExporter/tableExporter';
+import { getMetaData } from '../../utils/excelMetadata/getMetadata';
+import { generateHeaders } from './excelHeaders/generateExcelHeaders';
+import { getCommonSheetData } from './useGetCommonData/commonData';
+import { gererateFile } from './dataExporter/fileGenerator';
 
 export function useExportData(props: ExportData) {
     const [error, setError] = useState<any>(null)
     const { getData } = getCommonSheetData(props)
     const { getEvents, error: eventsError } = useGetEvents()
-    const { programConfig, unavailableSchoolDays, orgUnit, stagesToExport, module, endDate, startDate, seletedSectionDataStore = {} as unknown as DataStoreRecord, withSocioEconomics = false, sectionType } = props
-    const { ExcelGenerator } = gererateFile({ unavailableDays: unavailableSchoolDays as unknown as (date: Date) => boolean })
-    const { getHeaders } = generateHeaders({ programConfig, stagesToExport, seletedSectionDataStore, sectionType, withSocioEconomics, endDate, startDate })
+    const { programConfig, fileName, unavailableSchoolDays, orgUnit, stagesToExport, module, endDate, startDate, seletedSectionDataStore = {} as unknown as DataStoreRecord, withSocioEconomics = false, sectionType } = props
+    const { excelGenerator } = gererateFile({ unavailableDays: unavailableSchoolDays as unknown as (date: Date) => boolean })
+    const { getHeaders } = generateHeaders({ module, programConfig, stagesToExport, seletedSectionDataStore, sectionType, withSocioEconomics, endDate, startDate })
 
     async function exportData() {
-        if (module === modules.attendance && (!isDateFormatValid(endDate as unknown as string) || !isDateFormatValid(startDate as unknown as string))) {
+
+        if (module === modules.attendance &&
+            (!isDateFormatValid(endDate as unknown as string)
+                || !isDateFormatValid(startDate as unknown as string))
+        ) {
             setError('The date format is not correct, the expected date format is: yyyy-MM-dd')
         } else {
+
+            const { filters, formatedHeaders, ids } = getHeaders()
+            const metadata = getMetaData(programConfig, stagesToExport)
+
             let data = await getData()
 
             if (module != modules.enrollment) {
@@ -41,6 +50,7 @@ export function useExportData(props: ExportData) {
                         }).then((resp) => {
 
                             const dataValues = resp?.find((x: any) => x.enrollment === data[teisCounter].enrollment)
+
                             data[teisCounter] = {
                                 ...data[teisCounter], ...formatSheetData({
                                     module: module,
@@ -56,8 +66,8 @@ export function useExportData(props: ExportData) {
                 }
             }
 
+            await excelGenerator({ headers: formatedHeaders, rows: data, filters, fileName, metadata, module, ids })
         }
-        console.log(getHeaders())
     }
 
     return { exportData, error: error || eventsError }
