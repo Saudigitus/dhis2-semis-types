@@ -1,16 +1,16 @@
 import { useRecoilState } from "recoil";
 import { useEffect, useState } from "react";
 import { useDataQuery } from "@dhis2/app-runtime";
-import useShowAlerts from "../commons/useShowAlert";
-import { ProgramRulesVariablesConfigState } from "../../schema/programRulesVariablesSchema";
-import { ProgramRuleVariableConfig } from "../../types/programRules/ProgramRulesTypes";
+import useShowAlerts from "../../commons/useShowAlert";
+import { ProgramRulesVariablesConfigState } from "../../../schema/programRulesVariablesSchema";
+import { ProgramRuleVariableConfig } from "../../../types/programRules/ProgramRulesTypes";
 
 const PROGRAM_RULES_VARIABLES_QUERY = {
     results: {
         resource: "programRuleVariables",
-        params: ({ program }: any) => ({
+        params: ({ programFilter }: any) => ({
             paging: false,
-            filter: [`program.id:eq:${program}`],
+            filter: programFilter,
             fields: "name,dataElement,trackedEntityAttribute,program[id]",
 
         })
@@ -23,14 +23,14 @@ type ProgramRulesVariablesQueryResponse = {
     }
 }
 
-export function useGetProgramRulesVariables(program: string) {
+export function useGetProgramRulesVariables(programs: string[]) {
     const { hide, show } = useShowAlerts()
     const [error, setError] = useState<boolean>(false)
     const [, setProgramRuleVariablesConfigState] = useRecoilState(ProgramRulesVariablesConfigState);
 
     const { data, loading: loadingPRulesVariables, refetch } = useDataQuery<ProgramRulesVariablesQueryResponse>(PROGRAM_RULES_VARIABLES_QUERY, {
         variables: {
-            program
+            programFilter: programs?.map((program) => `program.id:eq:${program}`)
         },
         onError(error: { message: string }) {
             show({

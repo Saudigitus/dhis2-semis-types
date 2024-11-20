@@ -1,9 +1,8 @@
 import { useRecoilState } from "recoil"
-import { useFormatProgramRules } from "../useFormatProgramRules"
+import { useFormatProgramRules } from "../hooks/useFormatProgramRules"
 import { ProgramRulesFormatedState } from "../../../schema/programRulesFormated"
-import { CustomAttributeProps } from "../../../types/variables/AttributeColumns"
 import { FormattedPRulesType } from "../../../types/programRules/FormattedPRules"
-import { useFormatProgramRulesVariables } from "../useFormatProgramRulesVariables"
+import { useFormatProgramRulesVariables } from "../hooks/useFormatProgramRulesVariables"
 import { getFunctionExpression, getValueTypeVariable, removeSpecialCharacters, replaceConditionVariables } from "./RulesEngine"
 
 export const initializeRulesEngine = () => {
@@ -11,7 +10,7 @@ export const initializeRulesEngine = () => {
     const { programRulesVariables } = useFormatProgramRulesVariables()
     const [newProgramRules, setnewProgramRules] = useRecoilState(ProgramRulesFormatedState)
 
-    function initialize(columns: CustomAttributeProps[]) {
+    function initialize() {
         if (programRules?.length > 0 && Object.keys(programRulesVariables)?.length > 0 && newProgramRules?.length === 0) {
             const newProgramRule: FormattedPRulesType[] = programRules
                 .map((programRule: FormattedPRulesType) => {
@@ -20,7 +19,6 @@ export const initializeRulesEngine = () => {
                         functionName: getFunctionExpression(programRule.condition),
                         condition: replaceConditionVariables(removeSpecialCharacters(programRule?.condition), programRulesVariables),
                         data: replaceConditionVariables(removeSpecialCharacters(programRule?.data), programRulesVariables),
-                        valueType: getValueTypeVariable(columns, programRule)
                     }
                 })
             setnewProgramRules(newProgramRule)

@@ -5,12 +5,12 @@ import { initializeRulesEngine } from '../rules-engine/InitializeRulesEngine';
 import { RulesEngineWrapperProps } from '../../../types/programRules/RulesEngineProps';
 
 export default function RulesEngineWrapper(props: RulesEngineWrapperProps) {
-    const { program, columns } = props;
+    const { programs } = props;
     const { initialize } = initializeRulesEngine()
-    const { loading, error } = FetchEngineVariables(program)
+    const { loading, error } = FetchEngineVariables(programs)
 
     useEffect(() => {
-        initialize(columns)
+        initialize()
     }, [loading, error])
 
     if (loading) {

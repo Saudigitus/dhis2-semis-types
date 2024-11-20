@@ -1,17 +1,15 @@
 import { Form } from "react-final-form";
-import { useRecoilState } from 'recoil';
-import { WithPadding, GroupForm } from "dhis2-semis-components"
-import React, { Fragment, useEffect, useState, useRef } from 'react';
-import { ProgramRulesFormatedState } from '../../schema/programRulesFormated';
-import { RulesEngine } from '../../hooks/programRules/rules-engine/RulesEngine';
-import { formatKeyValueType } from '../../utils/programRules/formatKeyValueType';
 import { fields } from "../../utils/constants/fields";
+import { WithPadding, GroupForm } from "dhis2-semis-components";
+import React, { Fragment, useEffect, useState, useRef } from 'react';
+import { RulesType } from "../../types/programRules/RulesEngineProps";
+import { RulesEngine } from '../../hooks/programRules/rules-engine/RulesEngine';
 
 export const RulesEngineForm = (props: any) => {
     const { } = props;
     const [values, setValues] = useState<Record<string, string>>({})
     const formRef: React.MutableRefObject<FormApi<IForm, Partial<IForm>>> = useRef(null);
-    const { runRulesEngine, updatedVariables } = RulesEngine({ variables: fields, values, type: "programStageSection", formatKeyValueType: formatKeyValueType([]) })
+    const { runRulesEngine, updatedVariables } = RulesEngine({ variables: fields, values, type: RulesType.ProgramStageSection })
 
     useEffect(() => {
         runRulesEngine(fields)

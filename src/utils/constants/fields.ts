@@ -1,4 +1,6 @@
-export const fields = [
+import { SectionVariablesProps } from "../../types/programRules/RulesEngineProps";
+
+export const fields : SectionVariablesProps[] = [
     {
         name: "Attributes",
         description: "All attributes",

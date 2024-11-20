@@ -1,19 +1,29 @@
 import { CustomAttributeProps } from "../variables/AttributeColumns"
 
-type RulesType = "programStage" | "programStageSection" | "attributesSection"
+
+export enum RulesType {
+    ProgramStage = "ProgramStage",
+    AttributesSection = "AttributesSection",
+    ProgramStageSection = "ProgramStageSection",
+}
 
 interface RulesEngineProps {
     type: RulesType
-    variables: any[]
     programStage?: string
-    formatKeyValueType?: any,
     values: Record<string, any>
+    variables: SectionVariablesProps[] | CustomAttributeProps[]
+}
+
+interface SectionVariablesProps {
+    section: string
+    visible: boolean
+    description: string
+    fields: CustomAttributeProps[]
 }
 
 interface RulesEngineWrapperProps {
-    program: string,
+    programs: string[],
     children: React.ReactNode,
-    columns: CustomAttributeProps[],
 }
 
-export type { RulesType, RulesEngineProps, RulesEngineWrapperProps }
+export type { RulesEngineProps, SectionVariablesProps, RulesEngineWrapperProps }

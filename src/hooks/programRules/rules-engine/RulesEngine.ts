@@ -3,21 +3,21 @@ import { useRecoilValue } from "recoil";
 import { useState, useEffect } from "react";
 import { OptionGroupsConfigState } from "../../../schema/optionGroupsSchema";
 import { OrgUnitsGroupsConfigState } from "../../../schema/orgUnitsGroupSchema";
-import { RulesEngineProps } from "../../../types/programRules/RulesEngineProps";
 import { ProgramRulesFormatedState } from "../../../schema/programRulesFormated";
 import { compareStringByLabel } from "../../../utils/programRules/sortStringsByLabel";
+import { RulesEngineProps, RulesType } from "../../../types/programRules/RulesEngineProps";
+import { formatKeyValueType as formatValuesToKeyValue } from "../../../utils/programRules/formatKeyValueType";
 
 
 export const RulesEngine = (props: RulesEngineProps) => {
+    const { variables = [], values, type, programStage } = props
+    const formatKeyValueType = formatValuesToKeyValue(variables)
     const getOptionGroups = useRecoilValue(OptionGroupsConfigState)
     const newProgramRules = useRecoilValue(ProgramRulesFormatedState)
     const [updatedVariables, setupdatedVariables] = useState<any>([])
     const orgUnitsGroups = useRecoilValue(OrgUnitsGroupsConfigState)
-    const { variables = [], values, type, formatKeyValueType, programStage } = props
 
-    console.log(variables)
-    console.log(newProgramRules)
-    console.log(programStage)
+
     useEffect(() => {
         if (updatedVariables.length === 0) {
             setupdatedVariables([...variables])
@@ -25,9 +25,9 @@ export const RulesEngine = (props: RulesEngineProps) => {
     }, [variables])
 
     function runRulesEngine(data?: any[]) {
-        if (type === "programStageSection") rulesEngineSections(data)
-        else if (type === "programStage") rulesEngineDataElements(data)
-        else if (type === "attributesSection") rulesEngineAttributesSections(data)
+        if (type === RulesType.ProgramStageSection) rulesEngineSections(data)
+        else if (type === RulesType.ProgramStage) rulesEngineDataElements(data)
+        else if (type === RulesType.AttributesSection) rulesEngineAttributesSections(data)
     }
 
     // rules engine function for attributes/programSections
@@ -71,9 +71,10 @@ export const RulesEngine = (props: RulesEngineProps) => {
         const newProgramRulesFiltered = newProgramRules.filter(x => x.variable === variable.name)
         // const newProgramRulesFiltered = programStage ? newProgramRules.filter(x => x.programStage === programStage) : newProgramRules.filter(x => x.variable === variable.name)
 
-        console.log(newProgramRulesFiltered, variable)
+        console.log(Boolean(programStage), newProgramRulesFiltered, newProgramRules)
+        // console.log(newProgramRulesFiltered, variable)
         for (const programRule of newProgramRulesFiltered || []) {
-            console.log(programRule, 40404)
+            // console.log(programRule, 40404)
             try {
                 switch (programRule.type) {
                     case "attribute":
@@ -91,7 +92,7 @@ export const RulesEngine = (props: RulesEngineProps) => {
 
                                         // Verificar se a condição é uma string e o tipo de variável
                                         const isStringCondition = typeof evaluatedCondition === "string" || typeof evaluatedCondition === "boolean";
-                                        const isValidType = formatKeyValueType[variable.name] !== "INTEGER_ZERO_OR_POSITIVE" && formatKeyValueType[variable.name] !== "NUMBER";
+                                        const isValidType = formatKeyValueType![variable.name] !== "INTEGER_ZERO_OR_POSITIVE" && formatKeyValueType![variable.name] !== "NUMBER";
 
                                         if (isStringCondition && isValidType) {
                                             if (evaluatedCondition) {
