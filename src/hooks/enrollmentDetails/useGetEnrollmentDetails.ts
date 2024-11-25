@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { useGetTei } from '../tei/useGetTei';
 import { useGetEvents } from '../events/useGetEvents';
-import { ExportData, modules } from '../../types/bulk/bulkOperations';
+import { ExportData } from '../../types/bulk/bulkOperations';
 import { attributes, dataValues } from '../../utils/format/formatData';
+import { modules } from '../../types/common/moduleTypes';
 
 export function useGetEnrollmentData(props: ExportData) {
     const { getTei } = useGetTei()

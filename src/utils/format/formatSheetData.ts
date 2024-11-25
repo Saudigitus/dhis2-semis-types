@@ -1,4 +1,5 @@
-import { ExportData, modules } from "../../types/bulk/bulkOperations"
+import { ExportData } from "../../types/bulk/bulkOperations"
+import { modules } from "../../types/common/moduleTypes"
 import { DataStoreRecord } from "../../types/dataStore/DataStoreConfig"
 import { attendanceFormater, dataValues } from "./formatData"
 

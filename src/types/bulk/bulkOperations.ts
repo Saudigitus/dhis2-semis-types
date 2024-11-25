@@ -1,13 +1,12 @@
 import { DataStoreRecord } from "../dataStore/DataStoreConfig"
 import { ProgramConfig } from "../programConfig/ProgramConfig"
 
-enum modules {
-    attendance = "attendance",
-    final_result = "final-result",
-    enrollment = "enrollment",
-    performance = "performance",
-}
-
+/**
+ * Description placeholder
+ *
+ * @interface ExportData
+ * @typedef {ExportData}
+ */
 /**
  * Description placeholder
  *
@@ -116,7 +115,25 @@ interface ExportData {
     *
     * @type {function}
     */
-    unavailableSchoolDays?: (date: Date) => boolean
+    isSchoolDay?: (date: Date) => boolean
+
+    /**
+     * Sometimes we may need a blank file to add new data, with just the structure and headers. 
+     * 
+     * So this variable is intended to tell us whether the file to be exported should be empty
+     * 
+     * or contain the events of the registered students.
+     *
+     * @type {?boolean}
+     */
+    empty?: boolean
+
+    /**
+     * Number of empty rows wich you want to export, default is 25
+     *
+     * @type {?boolean}
+     */
+    numberOfEmpyRows?: number
 }
 
 interface GenerateHeaders {
@@ -125,10 +142,11 @@ interface GenerateHeaders {
     withSocioEconomics: boolean
     programConfig: ProgramConfig
     sectionType: string
-    unavailableSchoolDays?: (date: Date) => boolean
+    isSchoolDay?: (date: Date) => boolean
     startDate?: string
     endDate?: string
     module: string
+    empty: boolean
 }
 
 interface excelProps {
@@ -138,7 +156,7 @@ interface excelProps {
     fileName: string
     metadata: any[]
     module: string
-    ids: string[]
+    empty: boolean
 }
 
-export { ExportData, GenerateHeaders, modules, excelProps }
+export { ExportData, GenerateHeaders, excelProps }

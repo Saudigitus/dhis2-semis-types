@@ -22,9 +22,9 @@ export const lock = {
     formatColumns: false,
     formatRows: true,
     insertColumns: false,
-    insertRows: false,  // Prevents inserting new rows
+    insertRows: false, 
     deleteColumns: false,
-    deleteRows: false,  // Prevents deleting rows
+    deleteRows: false,
     sort: true,
     autoFilter: true,
     pivotTables: false,

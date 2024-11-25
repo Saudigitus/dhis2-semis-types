@@ -1,11 +1,23 @@
-import { GenerateHeaders, modules } from "../../../types/bulk/bulkOperations";
+import { GenerateHeaders } from "../../../types/bulk/bulkOperations";
+import { modules } from "../../../types/common/moduleTypes";
 import { generateAttendanceDays } from "../../../utils/attendance/generateAttendanceDays";
 import { dfHeaders } from "../../../utils/constants/dfHeaders";
 import { getFilterLables } from "../../../utils/format/getFilterLables";
 
 export function generateHeaders(props: GenerateHeaders) {
-    const { module, programConfig, stagesToExport, sectionType, seletedSectionDataStore, withSocioEconomics, unavailableSchoolDays, endDate, startDate } = props
-    const { getValidDaysToExport } = generateAttendanceDays({ unavailableDays: unavailableSchoolDays as unknown as (args: Date) => boolean })
+    const {
+        empty,
+        module,
+        programConfig,
+        stagesToExport,
+        sectionType,
+        seletedSectionDataStore,
+        withSocioEconomics,
+        isSchoolDay,
+        endDate,
+        startDate
+    } = props
+    const { getValidDaysToExport } = generateAttendanceDays({ unavailableDays: isSchoolDay as unknown as (args: Date) => boolean })
 
     function getHeaders() {
         let formatedHeaders: any[] = []
@@ -13,7 +25,7 @@ export function generateHeaders(props: GenerateHeaders) {
         ...((withSocioEconomics || module === modules.enrollment) ? [seletedSectionDataStore["socio-economics"].programStage] : []),
         ...(module != modules.enrollment ? stagesToExport : [])
         ]
-        let filters = {}, ids: string[] = []
+        let filters = {}
 
         const colors = {
             [seletedSectionDataStore.registration.programStage]: "FCE5CD",
@@ -45,7 +57,7 @@ export function generateHeaders(props: GenerateHeaders) {
             } else {
                 let schoolKey: any = []
 
-                if (currStage?.id === seletedSectionDataStore.registration.programStage) {
+                if (currStage?.id === seletedSectionDataStore.registration.programStage && !empty) {
                     schoolKey.push({
                         header: 'School',
                         key: 'school',
@@ -63,7 +75,7 @@ export function generateHeaders(props: GenerateHeaders) {
                     if (de?.dataElement?.optionSet?.options?.length > 0) filters[de.dataElement.id] = getFilterLables(de.dataElement.optionSet.options)
                     section = {
                         ...section, headers: [...section.headers, {
-                            header: de?.dataElement.displayName,
+                            header: `${de?.dataElement.displayName}${de.compulsory && empty ? "*" : ""}`,
                             key: `${stageId}.${de?.dataElement?.id}`,
                             width: 25,
                         }]
@@ -76,7 +88,7 @@ export function generateHeaders(props: GenerateHeaders) {
 
         const att = programConfig?.programTrackedEntityAttributes?.filter((att) => att.displayInList).map(x => {
             return {
-                header: x.trackedEntityAttribute.displayName,
+                header: `${x.trackedEntityAttribute.displayName}${x.mandatory && empty ? "*" : ""}`,
                 key: x.trackedEntityAttribute?.id,
                 width: 25,
             }
@@ -91,14 +103,13 @@ export function generateHeaders(props: GenerateHeaders) {
             }, ...(att || [])], fill: 'D9EAD3'
         })
 
-        formatedHeaders.push({
-            name: "Ids",
-            headers: dfHeaders
-        })
+        if (!empty)
+            formatedHeaders.push({
+                name: "Ids",
+                headers: dfHeaders
+            })
 
-        formatedHeaders.map(x => x?.headers?.map((header: any) => ids.push(header.key)))
-        console.log(formatedHeaders, ids)
-        return { formatedHeaders, filters, ids }
+        return { formatedHeaders, filters }
     }
 
     return { getHeaders }

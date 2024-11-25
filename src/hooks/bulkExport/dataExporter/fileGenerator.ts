@@ -2,9 +2,10 @@ import Excel from 'exceljs'
 import { saveAs } from 'file-saver'
 import { alignment, border, dataValidation, fill, lock } from '../../../utils/exporterSettings/exporterConsts';
 import metadataHeaders from '../../../utils/constants/metadataHeaders.json'
-import { excelProps, modules } from '../../../types/bulk/bulkOperations';
+import { excelProps } from '../../../types/bulk/bulkOperations';
 import { separateByMonth } from '../../../utils/attendance/separateByMonth';
 import { dfHeaders } from '../../../utils/constants/dfHeaders';
+import { modules } from '../../../types/common/moduleTypes';
 
 export function gererateFile({ unavailableDays }: { unavailableDays: (date: Date) => boolean }) {
     const password = '#saudigitus_SEMIS_Export#'
@@ -13,12 +14,11 @@ export function gererateFile({ unavailableDays }: { unavailableDays: (date: Date
         let sheet: any = {};
         const regex = /^\d{4}-\d{2}-\d{2}$/
         const workbook = new Excel.Workbook();
-        const { headers, rows, filters, fileName, metadata, module, ids } = props
-        const workSheets = { ...(module === modules.attendance ? separateByMonth(headers.find(x => x.name === 'Attendance').headers) : { module: module }) }
+        const { headers, rows, filters, fileName, metadata, module, empty } = props
+        const workSheets = { ...(module === modules.attendance ? separateByMonth(headers.find(x => x.name === 'Attendance').headers) : { [module]: module }) }
 
         Object.keys(workSheets).map((workSheet) => {
             let columns: any = [], colIndex = 1, counter = 0
-
             sheet = workbook.addWorksheet(workSheet)
 
             headers.forEach(section => {
@@ -36,7 +36,7 @@ export function gererateFile({ unavailableDays }: { unavailableDays: (date: Date
 
             // Add the subheaders to the second row
             let secondRow = sheet.getRow(2);
-            secondRow.values = ids.map((col: any) => col);
+            secondRow.values = columns.map((x: any) => x.key)
             secondRow.hidden = true
 
             let thirdRow = sheet.getRow(3);
@@ -72,8 +72,7 @@ export function gererateFile({ unavailableDays }: { unavailableDays: (date: Date
 
             rows.map(row => sheet.addRow(row))
 
-            const headerRow = sheet.getRow(3);
-            headerRow.eachCell((headerCell: any, colIndex: number) => {
+            sheet.getRow(3).eachCell((headerCell: any, colIndex: number) => {
                 const columnHeader = headerCell.value;
                 const colKey = sheet.getColumn(colIndex)._key
                 const index = dfHeaders.findIndex((x: any) => x.key === colKey)
@@ -84,14 +83,15 @@ export function gererateFile({ unavailableDays }: { unavailableDays: (date: Date
                 }
 
                 sheet.eachRow((row: any) => {
-                    const dataElementId = colKey.split("_")[0]
+                    const dataElementId = colKey.split(".")[1]
                     const cell = row.getCell(colIndex);
+
+                    if (empty && colKey != 'ref') cell.protection = { locked: false }
 
                     if (filters[dataElementId])
                         cell.dataValidation = { ...dataValidation, formulae: ['"' + filters[dataElementId] + '"'] };
                     else if (regex.test(columnHeader))
                         cell.dataValidation = { ...dataValidation, formulae: ['"' + filters["Attendance"] + '"'] };
-
                 });
             });
 
