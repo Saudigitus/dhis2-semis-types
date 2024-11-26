@@ -31,46 +31,59 @@ export class useValidation {
         this.module = module;
     }
 
-    validation(file: File) {
-        const reader: FileReader = new FileReader();
-        reader.onload = (event) => {
-            const data: Uint8Array = new Uint8Array(event.target?.result as any);
-            const workbook = read(data, {
-                type: 'array',
-                cellDates: true,
-                cellNF: false,
-                dateNF: "YYYY-MM-DD",
-                cellText: true
-            });
-
-            this.converterXlstoJson(workbook)
-
-            this.sheetValidation(workbook.SheetNames);
-
-            if (this.module === modules.attendance) {
-
-                const studentAttendance: any = []
-                for (let i = 3; i < this.rawData.length; i++) {
-
-                    studentAttendance.push(this.mapDataWithKeys(this.rawData[i], this.headerVariablesSheets, this.headerSectionSheets))
+    async validation(file: File): Promise<{ mapping: any; module: any }> {
+        return new Promise((resolve, reject) => {
+            const reader: FileReader = new FileReader();
+            const studentAttendance: any = [];
+    
+            reader.onload = (event) => {
+                try {
+                    // Parse the uploaded file
+                    const data: Uint8Array = new Uint8Array(event.target?.result as any);
+                    const workbook = read(data, {
+                        type: 'array',
+                        cellDates: true,
+                        cellNF: false,
+                        dateNF: "YYYY-MM-DD",
+                        cellText: true
+                    });
+    
+                    // Convert Excel to JSON and validate the sheet structure
+                    this.converterXlstoJson(workbook);
+                    this.sheetValidation(workbook.SheetNames);
+    
+                    // Process attendance data if the module is attendance
+                    if (this.module === modules.attendance) {
+                        for (let i = 3; i < this.rawData.length; i++) {
+                            studentAttendance.push(this.mapDataWithKeys(
+                                this.rawData[i],
+                                this.headerVariablesSheets,
+                                this.headerSectionSheets
+                            ));
+                        }
+                    }
+    
+                    // Resolve the Promise with the result
+                    resolve({
+                        mapping: this.module === modules.attendance
+                            ? studentAttendance
+                            : this.mapDataWithKeys(this.rawData[3], this.headerVariablesSheets, this.headerSectionSheets),
+                        module: this.module
+                    });
+                } catch (error) {
+                    // Reject the Promise in case of any error
+                    reject(error);
                 }
-
-                console.log(studentAttendance)
-
-            } else {
-
-                console.log({
-                    configData: this.configData,
-                    rawData: this.rawData,
-                    headerSectionSheets: this.headerSectionSheets,
-                    mappedValues: this.mapDataWithKeys(this.rawData[3], this.headerVariablesSheets, this.headerSectionSheets)
-
-                });
-            }
-
-        }
-        reader.readAsArrayBuffer(file);
-    }
+            };
+    
+            reader.onerror = (error) => {
+                reject(error); // Handle file reading errors
+            };
+    
+            // Start reading the file as an ArrayBuffer
+            reader.readAsArrayBuffer(file);
+        });
+    }    
 
     private converterXlstoJson(workbook: WorkBook) {
 
@@ -280,7 +293,7 @@ export class useValidation {
 
                 // Iniciar uma nova seção
                 currentSection = value;
-                startIndex = index ;
+                startIndex = index;
                 structure[currentSection!] = { start: startIndex!, end: null };
             }
         });

@@ -6,9 +6,9 @@ import { modules } from '../../types/commons/moduleTypes'
 function TemplateValidation() {
     const UseValidation = new useValidation()
 
-    const onValidation = (file: File) => {
+    const onValidation = async(file: File) => {
         UseValidation.setModule(modules.attendance)
-        UseValidation.validation(file[0])
+        console.log(await UseValidation.validation(file[0]))
     }
 
 
