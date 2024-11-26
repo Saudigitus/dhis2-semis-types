@@ -2,12 +2,11 @@ import React from 'react'
 import classes from './App.module.css'
 import { Router } from '../routes'
 
-
-
-const MyApp = () => (
-    <div className={classes.container}>
-       <button>Test</button>
-    </div>
-)
-
+function MyApp() {
+    return (
+        <div>
+            <button onClick={async () => await exportData()} >Click-me</button>
+        </div>
+    )
+}
 export default MyApp

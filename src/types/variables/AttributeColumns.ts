@@ -3,6 +3,8 @@ import { type Attribute } from '../generated/models';
 export enum VariablesTypes {
     DataElement = "dataElement",
     Attribute = "attribute",
+    Custom = "custom",
+    Default = "default",
 }
 
 export interface CustomAttributeProps {
@@ -13,6 +15,7 @@ export interface CustomAttributeProps {
     required: boolean
     name: string
     programStage?: string
+    assignedValue?: string
     value?: string
     labelName: string
     valueType: typeof Attribute.valueType
@@ -24,6 +27,18 @@ export interface CustomAttributeProps {
             options: OptionsProps[]
         }
     }
+    pattern?: string
+    searchable?: boolean
+    error?: boolean
+    warning?:boolean
+    content?: string
+    key?: any
+    description?: string
+    displayInFilters?: boolean
+    type: VariablesTypes
+    trackedEntity?: string
+    placeholder?: string
+    unique?: boolean
     initialOptions: {
         optionSet: {
             id: string
@@ -44,3 +59,4 @@ export interface OptionsProps {
     value: string
     label: string
 }
+
