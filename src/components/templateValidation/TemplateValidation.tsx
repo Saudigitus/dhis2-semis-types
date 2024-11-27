@@ -7,7 +7,7 @@ function TemplateValidation() {
     const UseValidation = new useValidation()
 
     const onValidation = async(file: File) => {
-        UseValidation.setModule(modules.attendance)
+        UseValidation.setModule(modules.performance)
         console.log(await UseValidation.validation(file[0]))
     }
 
