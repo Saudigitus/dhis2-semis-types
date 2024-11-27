@@ -86,7 +86,9 @@ export function generateHeaders(props: GenerateHeaders) {
             }
         }
 
-        const att = programConfig?.programTrackedEntityAttributes?.filter((att) => att.displayInList).map(x => {
+        const att = programConfig?.programTrackedEntityAttributes?.map(x => {
+            if (x?.trackedEntityAttribute?.optionSet?.options?.length > 0) filters[x.trackedEntityAttribute.id] = getFilterLables(x?.trackedEntityAttribute?.optionSet?.options)
+
             return {
                 header: `${x.trackedEntityAttribute.displayName}${x.mandatory && empty ? "*" : ""}`,
                 key: x.trackedEntityAttribute?.id,

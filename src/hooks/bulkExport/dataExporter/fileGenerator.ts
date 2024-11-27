@@ -6,6 +6,8 @@ import { excelProps } from '../../../types/bulk/bulkOperations';
 import { separateByMonth } from '../../../utils/attendance/separateByMonth';
 import { dfHeaders } from '../../../utils/constants/dfHeaders';
 import { modules } from '../../../types/common/moduleTypes';
+import { generateValidationSheet } from '../../../utils/common/generateValidationSheet';
+import { convertNumberToLetter } from '../../../utils/common/convertNumberToLetter';
 
 export function gererateFile({ unavailableDays }: { unavailableDays: (date: Date) => boolean }) {
     const password = '#saudigitus_SEMIS_Export#'
@@ -16,6 +18,11 @@ export function gererateFile({ unavailableDays }: { unavailableDays: (date: Date
         const workbook = new Excel.Workbook();
         const { headers, rows, filters, fileName, metadata, module, empty } = props
         const workSheets = { ...(module === modules.attendance ? separateByMonth(headers.find(x => x.name === 'Attendance').headers) : { [module]: module }) }
+        const { validationHeaders, validationRows } = generateValidationSheet(filters)
+
+        let validationSheet = workbook.addWorksheet('Validation')
+        validationSheet.columns = validationHeaders;
+        validationRows.map((row: any) => validationSheet.addRow(row))
 
         Object.keys(workSheets).map((workSheet) => {
             let columns: any = [], colIndex = 1, counter = 0
@@ -35,11 +42,11 @@ export function gererateFile({ unavailableDays }: { unavailableDays: (date: Date
             sheet.columns = columns;
 
             // Add the subheaders to the second row
-            let secondRow = sheet.getRow(2);
+            let secondRow = sheet.getRow(3);
             secondRow.values = columns.map((x: any) => x.key)
             secondRow.hidden = true
 
-            let thirdRow = sheet.getRow(3);
+            let thirdRow = sheet.getRow(2);
             thirdRow.values = columns.map((col: any) => col.subHeader);
 
             // Merge cells in the first row for headers with multiple subheaders 
@@ -72,7 +79,7 @@ export function gererateFile({ unavailableDays }: { unavailableDays: (date: Date
 
             rows.map(row => sheet.addRow(row))
 
-            sheet.getRow(3).eachCell((headerCell: any, colIndex: number) => {
+            sheet.getRow(2).eachCell((headerCell: any, colIndex: number) => {
                 const columnHeader = headerCell.value;
                 const colKey = sheet.getColumn(colIndex)._key
                 const index = dfHeaders.findIndex((x: any) => x.key === colKey)
@@ -83,15 +90,18 @@ export function gererateFile({ unavailableDays }: { unavailableDays: (date: Date
                 }
 
                 sheet.eachRow((row: any) => {
-                    const dataElementId = colKey.split(".")[1]
+                    const dataElementId = colKey.split(".")
                     const cell = row.getCell(colIndex);
 
                     if (empty && colKey != 'ref') cell.protection = { locked: false }
 
-                    if (filters[dataElementId])
-                        cell.dataValidation = { ...dataValidation, formulae: ['"' + filters[dataElementId] + '"'] };
-                    else if (regex.test(columnHeader))
-                        cell.dataValidation = { ...dataValidation, formulae: ['"' + filters["Attendance"] + '"'] };
+                    if (filters?.[dataElementId[0]] || filters?.[dataElementId[1]] || (regex.test(columnHeader) && filters["Attendance"])) {
+                        const colFilter = filters?.[dataElementId[1]] ?? filters?.[dataElementId[0]] ?? filters["Attendance"]
+                        const columnLetter = convertNumberToLetter(validationSheet.getColumn(dataElementId?.[1] ?? dataElementId?.[0]).number);
+                        const formula = `'${validationSheet.name}'!$${columnLetter}$2:$${columnLetter}$${colFilter.split(',').length + 1}`;
+
+                        cell.dataValidation = { ...dataValidation, formulae: [formula] };
+                    }
                 });
             });
 
