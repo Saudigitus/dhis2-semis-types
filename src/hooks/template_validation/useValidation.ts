@@ -2,6 +2,7 @@ import { modules } from '../../types/commons/moduleTypes';
 import { read, utils, WorkBook } from "xlsx";
 
 const METADATA = "Metadata"
+const VALIDATION = "Validation"
 const Ids = "Ids"
 const Attendance = "Attendance"
 
@@ -132,7 +133,7 @@ export class useValidation {
              * Loop through each sheet name in `newSheetNames` and collect attendance-related headers.
              */
             for (const sheetName of newSheetNames) {
-                if (sheetName !== METADATA) {
+                if ((sheetName !== METADATA) && (sheetName !== VALIDATION)) {
                     /**
                      * Format the structure of headers for the current sheet.
                      */
@@ -225,7 +226,7 @@ export class useValidation {
              * Update the class-level properties with the processed data.
              */
             this.headerSectionSheets = this.formatSectionStructure(allRawDataOnFirstSheet[0]);
-            this.headerVariablesSheets = allRawDataOnFirstSheet[1] as Record<string, string>[];
+            this.headerVariablesSheets = allRawDataOnFirstSheet[2] as Record<string, string>[];
             this.SheetNames = sheetNames;
             this.configData = utils.sheet_to_json(configWorksheet);
             this.rawData = allRawDataOnFirstSheet;
@@ -237,13 +238,13 @@ export class useValidation {
              * Get the first sheet in the workbook in cases of single sheet and convert it as a json
              * set to the global variables
              */
-            const sheetName = workbook.SheetNames[0];
+            const sheetName = workbook.SheetNames[1];
             const worksheet = workbook.Sheets[sheetName];
-            const configSheet = workbook.SheetNames[1];
+            const configSheet = workbook.SheetNames[2];
             const configWorksheet = workbook.Sheets[configSheet];
 
 
-            this.headerVariablesSheets = utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]], { header: 1, raw: false, dateNF: 'yyyy-mm-dd', defval: "" })?.[1] as Record<string, string>[];
+            this.headerVariablesSheets = utils.sheet_to_json(workbook.Sheets[sheetName], { header: 1, raw: false, dateNF: 'yyyy-mm-dd', defval: "" })?.[2] as Record<string, string>[];
             this.headerSectionSheets = this.formatSectionStructure(utils.sheet_to_json(worksheet, { header: 1, raw: false, dateNF: 'yyyy-mm-dd', defval: "" })?.[0] as Record<string, string>[]);
             this.rawData = utils.sheet_to_json(worksheet, { header: 1, raw: false, dateNF: 'yyyy-mm-dd', defval: "" });
             this.configData = utils.sheet_to_json(configWorksheet);

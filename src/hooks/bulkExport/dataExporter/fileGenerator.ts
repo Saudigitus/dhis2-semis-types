@@ -20,9 +20,10 @@ export function gererateFile({ unavailableDays }: { unavailableDays: (date: Date
         const workSheets = { ...(module === modules.attendance ? separateByMonth(headers.find(x => x.name === 'Attendance').headers) : { [module]: module }) }
         const { validationHeaders, validationRows } = generateValidationSheet(filters)
 
-        let validationSheet = workbook.addWorksheet('Validation')
+        let validationSheet = workbook.addWorksheet('Validation', { state: 'veryHidden' })
         validationSheet.columns = validationHeaders;
         validationRows.map((row: any) => validationSheet.addRow(row))
+        validationSheet.protect(password, lock)
 
         Object.keys(workSheets).map((workSheet) => {
             let columns: any = [], colIndex = 1, counter = 0
@@ -42,12 +43,15 @@ export function gererateFile({ unavailableDays }: { unavailableDays: (date: Date
             sheet.columns = columns;
 
             // Add the subheaders to the second row
-            let secondRow = sheet.getRow(3);
-            secondRow.values = columns.map((x: any) => x.key)
-            secondRow.hidden = true
+            let thirdRow = sheet.getRow(3);
+            thirdRow.values = columns.map((x: any) => x.key)
+            thirdRow.hidden = true
+            thirdRow.eachCell((cell: any) => {
+                cell.protection = { locked: true };
+            });
 
-            let thirdRow = sheet.getRow(2);
-            thirdRow.values = columns.map((col: any) => col.subHeader);
+            let secondRow = sheet.getRow(2);
+            secondRow.values = columns.map((col: any) => col.subHeader);
 
             // Merge cells in the first row for headers with multiple subheaders 
             headers.forEach(section => {
@@ -70,7 +74,7 @@ export function gererateFile({ unavailableDays }: { unavailableDays: (date: Date
                 (section?.name == 'Attendance' ? workSheets[workSheet] : section.headers).map(() => {
                     counter++
 
-                    const cell = thirdRow.getCell(counter);
+                    const cell = secondRow.getCell(counter);
                     cell.fill = { fgColor: { argb: section.fill }, ...fill as unknown as any }
                     cell.border = border as unknown as any
                     cell.font = { bold: true };
@@ -89,18 +93,20 @@ export function gererateFile({ unavailableDays }: { unavailableDays: (date: Date
                     col.hidden = true
                 }
 
-                sheet.eachRow((row: any) => {
+                sheet.eachRow((row: any, index: number) => {
                     const dataElementId = colKey.split(".")
                     const cell = row.getCell(colIndex);
 
-                    if (empty && colKey != 'ref') cell.protection = { locked: false }
+                    if (empty && colKey != 'ref' && index > 2) cell.protection = { locked: false }
 
                     if (filters?.[dataElementId[0]] || filters?.[dataElementId[1]] || (regex.test(columnHeader) && filters["Attendance"])) {
-                        const colFilter = filters?.[dataElementId[1]] ?? filters?.[dataElementId[0]] ?? filters["Attendance"]
-                        const columnLetter = convertNumberToLetter(validationSheet.getColumn(dataElementId?.[1] ?? dataElementId?.[0]).number);
-                        const formula = `'${validationSheet.name}'!$${columnLetter}$2:$${columnLetter}$${colFilter.split(',').length + 1}`;
+                        if (index > 2) {
+                            const colFilter = filters?.[dataElementId[1]] ?? filters?.[dataElementId[0]] ?? filters["Attendance"]
+                            const columnLetter = convertNumberToLetter(validationSheet.getColumn(dataElementId?.[1] ?? dataElementId?.[0]).number);
+                            const formula = `'${validationSheet.name}'!$${columnLetter}$2:$${columnLetter}$${colFilter.split(',').length + 1}`;
 
-                        cell.dataValidation = { ...dataValidation, formulae: [formula] };
+                            cell.dataValidation = { ...dataValidation, formulae: [formula] };
+                        }
                     }
                 });
             });

@@ -20,7 +20,7 @@ export function generateHeaders(props: GenerateHeaders) {
     const { getValidDaysToExport } = generateAttendanceDays({ unavailableDays: isSchoolDay as unknown as (args: Date) => boolean })
 
     function getHeaders() {
-        let formatedHeaders: any[] = []
+        let formatedHeaders: any[] = [], toGenerate: any[] = []
         const stageHeaders = [seletedSectionDataStore.registration.programStage,
         ...((withSocioEconomics || module === modules.enrollment) ? [seletedSectionDataStore["socio-economics"].programStage] : []),
         ...(module != modules.enrollment ? stagesToExport : [])
@@ -57,12 +57,18 @@ export function generateHeaders(props: GenerateHeaders) {
             } else {
                 let schoolKey: any = []
 
-                if (currStage?.id === seletedSectionDataStore.registration.programStage && !empty) {
-                    schoolKey.push({
+                if (currStage?.id === seletedSectionDataStore.registration.programStage) {
+                    const defaultHeaders = [{
                         header: 'School',
                         key: 'school',
                         width: 25,
-                    })
+                    }, ...(empty ? [{
+                        header: 'Enrollment Date',
+                        key: 'enrollmentDate',
+                        width: 25,
+                    }] : [])]
+
+                    schoolKey = defaultHeaders
                 }
 
                 let section: any = {
@@ -77,7 +83,7 @@ export function generateHeaders(props: GenerateHeaders) {
                         ...section, headers: [...section.headers, {
                             header: `${de?.dataElement.displayName}${de.compulsory && empty ? "*" : ""}`,
                             key: `${stageId}.${de?.dataElement?.id}`,
-                            width: 25,
+                            width: de?.dataElement.displayName.length > 25 ? de?.dataElement.displayName.length : 25,
                         }]
                     }
                 })
@@ -88,11 +94,12 @@ export function generateHeaders(props: GenerateHeaders) {
 
         const att = programConfig?.programTrackedEntityAttributes?.map(x => {
             if (x?.trackedEntityAttribute?.optionSet?.options?.length > 0) filters[x.trackedEntityAttribute.id] = getFilterLables(x?.trackedEntityAttribute?.optionSet?.options)
+            if (x.trackedEntityAttribute.generated || x.trackedEntityAttribute.unique) toGenerate.push(x.trackedEntityAttribute.id)
 
             return {
                 header: `${x.trackedEntityAttribute.displayName}${x.mandatory && empty ? "*" : ""}`,
                 key: x.trackedEntityAttribute?.id,
-                width: 25,
+                width: x.trackedEntityAttribute.displayName.length > 25 ? x.trackedEntityAttribute.displayName : 25,
             }
         })
 
@@ -101,7 +108,7 @@ export function generateHeaders(props: GenerateHeaders) {
             name: (sectionType ?? '').substring(0, 1).toUpperCase() + (sectionType ?? '').substring(1, (sectionType ?? '').length) + ' profile', headers: [{
                 header: 'Ref',
                 key: 'ref',
-                width: 25,
+                width: 15,
             }, ...(att || [])], fill: 'D9EAD3'
         })
 
@@ -111,7 +118,7 @@ export function generateHeaders(props: GenerateHeaders) {
                 headers: dfHeaders
             })
 
-        return { formatedHeaders, filters }
+        return { formatedHeaders, filters, toGenerate }
     }
 
     return { getHeaders }

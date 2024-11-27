@@ -10,11 +10,13 @@ import { getCommonSheetData } from './useGetCommonData/commonData';
 import { gererateFile } from './dataExporter/fileGenerator';
 import { modules } from '../../types/common/moduleTypes';
 import { genarateEmpttyRows } from '../../utils/common/generateData';
+import { generateAndReserveIds } from './generateIds/generateAndReserve';
 
 export function useExportData(props: ExportData) {
     const [error, setError] = useState<any>(null)
     const { getData } = getCommonSheetData(props)
     const { getEvents, error: eventsError } = useGetEvents()
+    const { generate } = generateAndReserveIds()
     const {
         numberOfEmpyRows = 25,
         programConfig,
@@ -28,7 +30,8 @@ export function useExportData(props: ExportData) {
         seletedSectionDataStore = {} as unknown as DataStoreRecord,
         withSocioEconomics = false,
         sectionType,
-        empty = false
+        empty = false,
+        orgUnitName
     } = props
     const { excelGenerator } = gererateFile({ unavailableDays: isSchoolDay as unknown as (date: Date) => boolean })
     const { getHeaders } = generateHeaders({
@@ -52,7 +55,7 @@ export function useExportData(props: ExportData) {
             setError('The date format is not correct, the expected date format is: yyyy-MM-dd')
         } else {
             let data: any = []
-            const { filters, formatedHeaders } = getHeaders()
+            const { filters, formatedHeaders, toGenerate } = getHeaders()
             const metadata = getMetaData(programConfig, stagesToExport)
 
             if (!empty) {
@@ -93,7 +96,14 @@ export function useExportData(props: ExportData) {
                     }
                 }
             } else if (empty && module == modules.enrollment) {
-                data = genarateEmpttyRows(numberOfEmpyRows, formatedHeaders)
+                let ids = {}
+
+                for (const idToGenerate of toGenerate) {
+                    const generatedIds = await generate(numberOfEmpyRows, idToGenerate) as unknown as any
+                    ids[idToGenerate] = generatedIds?.result?.map((x: any) => x.value)
+                }
+
+                data = genarateEmpttyRows(numberOfEmpyRows, formatedHeaders, ids, orgUnitName)
             } else {
                 setError('empty só é aplicavel para o módulo do enrollment!')
             }

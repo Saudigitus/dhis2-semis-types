@@ -20,7 +20,7 @@ export const lock = {
     selectUnlockedCells: true,
     formatCells: true,
     formatColumns: false,
-    formatRows: true,
+    formatRows: false,
     insertColumns: false,
     insertRows: false, 
     deleteColumns: false,
