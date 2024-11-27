@@ -34,8 +34,8 @@ export class useValidation {
     async validation(file: File): Promise<{ mapping: any; module: any }> {
         return new Promise((resolve, reject) => {
             const reader: FileReader = new FileReader();
-            const studentAttendance: any = [];
-    
+            const mappedData: any = [];
+
             reader.onload = (event) => {
                 try {
                     // Parse the uploaded file
@@ -47,27 +47,23 @@ export class useValidation {
                         dateNF: "YYYY-MM-DD",
                         cellText: true
                     });
-    
+
                     // Convert Excel to JSON and validate the sheet structure
                     this.converterXlstoJson(workbook);
                     this.sheetValidation(workbook.SheetNames);
-    
-                    // Process attendance data if the module is attendance
-                    if (this.module === modules.attendance) {
-                        for (let i = 3; i < this.rawData.length; i++) {
-                            studentAttendance.push(this.mapDataWithKeys(
-                                this.rawData[i],
-                                this.headerVariablesSheets,
-                                this.headerSectionSheets
-                            ));
-                        }
+
+                    // Process data 
+                    for (let i = 3; i < this.rawData.length; i++) {
+                        mappedData.push(this.mapDataWithKeys(
+                            this.rawData[i],
+                            this.headerVariablesSheets,
+                            this.headerSectionSheets
+                        ));
                     }
-    
+
                     // Resolve the Promise with the result
                     resolve({
-                        mapping: this.module === modules.attendance
-                            ? studentAttendance
-                            : this.mapDataWithKeys(this.rawData[3], this.headerVariablesSheets, this.headerSectionSheets),
+                        mapping: mappedData,
                         module: this.module
                     });
                 } catch (error) {
@@ -75,15 +71,15 @@ export class useValidation {
                     reject(error);
                 }
             };
-    
+
             reader.onerror = (error) => {
                 reject(error); // Handle file reading errors
             };
-    
+
             // Start reading the file as an ArrayBuffer
             reader.readAsArrayBuffer(file);
         });
-    }    
+    }
 
     private converterXlstoJson(workbook: WorkBook) {
 
