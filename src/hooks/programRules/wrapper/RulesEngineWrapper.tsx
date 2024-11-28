@@ -1,9 +1,14 @@
 import React, { Fragment, useEffect } from 'react'
 import FetchEngineVariables from './FetchEngineVariables';
-import { CenteredContent, CircularLoader } from "@dhis2/ui";
+import { Center, CircularLoader, NoticeBox } from "@dhis2/ui";
 import { initializeRulesEngine } from '../rules-engine/InitializeRulesEngine';
 import { RulesEngineWrapperProps } from '../../../types/programRules/RulesEngineProps';
 
+/**
+ * A component to initialize all required variables to run program rules.
+ * @param {RulesEngineWrapperProps} props - The wrapper properties.
+ * @returns {*} A JSX component which renders circular loader, error messages or wrapper children based whith the initializer status.
+ */
 export default function RulesEngineWrapper(props: RulesEngineWrapperProps) {
     const { programs } = props;
     const { initialize } = initializeRulesEngine()
@@ -15,17 +20,22 @@ export default function RulesEngineWrapper(props: RulesEngineWrapperProps) {
 
     if (loading) {
         return (
-            <CenteredContent>
+            <Center>
                 <CircularLoader />
-            </CenteredContent>
+            </Center>
         )
     }
 
     if (error) {
         return (
-            <CenteredContent>
-                Something went wrong wen loading the app program rules, please check if you app is already configured.
-            </CenteredContent>
+            <Center>
+                <NoticeBox
+                    error
+                    title="Error loading Program Rules"
+                >
+                    Something went wrong loading the app program rules. Check if your app is already configured.
+                </NoticeBox>
+            </Center>
         )
     }
 
