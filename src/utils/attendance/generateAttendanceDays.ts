@@ -6,7 +6,6 @@ export function generateAttendanceDays({ unavailableDays }: { unavailableDays: (
         const [sYear, sMonth, sDay] = format(new Date(sDate.getFullYear(), sDate.getMonth(), sDate.getDate()), "yyyy-MM-dd").split('-').map(Number);
         const [eYear, eMonth, eDay] = format(new Date(eDate.getFullYear(), eDate.getMonth(), eDate.getDate()), "yyyy-MM-dd").split('-').map(Number);
 
-        console.log(unavailableDays,'sasas')
         for (var arr: { schoolDay: boolean, date: string }[] = [],
             currentDate = new Date(sYear, sMonth - 1, sDay);
             currentDate <= new Date(eYear, eMonth - 1, eDay);

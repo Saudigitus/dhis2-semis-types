@@ -107,14 +107,14 @@ export class useValidation {
              * This helps to define the start and end positions of different sections (e.g., attendance).
              */
             let headerSectionSheets: any = this.formatSectionStructure(
-                utils.sheet_to_json(workbook.Sheets[sheetNames[0]], { header: 1, raw: false, dateNF: 'yyyy-mm-dd', defval: "" })?.[0] as Record<string, string>[]
+                utils.sheet_to_json(workbook.Sheets[sheetNames[1]], { header: 1, raw: false, dateNF: 'yyyy-mm-dd', defval: "" })?.[0] as Record<string, string>[]
             );
 
             /**
              * Convert all rows in the first sheet to JSON format.
              */
             const allRawDataOnFirstSheet = utils.sheet_to_json(
-                workbook.Sheets[sheetNames[0]],
+                workbook.Sheets[sheetNames[1]],
                 { header: 1, raw: false, dateNF: 'yyyy-mm-dd', defval: "" }
             );
 
@@ -167,7 +167,7 @@ export class useValidation {
                 let attendanceData: any = [];
 
                 for (const sheetName of newSheetNames) {
-                    if (sheetName !== METADATA) {
+                    if ((sheetName !== METADATA) && (sheetName !== VALIDATION)) {
                         /**
                          * Format the structure of headers for the current sheet.
                          */

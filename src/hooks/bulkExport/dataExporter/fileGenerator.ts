@@ -102,7 +102,7 @@ export function gererateFile({ unavailableDays }: { unavailableDays: (date: Date
                     if (filters?.[dataElementId[0]] || filters?.[dataElementId[1]] || (regex.test(columnHeader) && filters["Attendance"])) {
                         if (index > 2) {
                             const colFilter = filters?.[dataElementId[1]] ?? filters?.[dataElementId[0]] ?? filters["Attendance"]
-                            const columnLetter = convertNumberToLetter(validationSheet.getColumn(dataElementId?.[1] ?? dataElementId?.[0]).number);
+                            const columnLetter = convertNumberToLetter(validationSheet.getColumn(regex.test(columnHeader) ? 'Attendance' : dataElementId?.[1] ?? dataElementId?.[0]).number);
                             const formula = `'${validationSheet.name}'!$${columnLetter}$2:$${columnLetter}$${colFilter.split(',').length + 1}`;
 
                             cell.dataValidation = { ...dataValidation, formulae: [formula] };

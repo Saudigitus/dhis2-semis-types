@@ -159,4 +159,13 @@ interface excelProps {
     empty: boolean
 }
 
-export { ExportData, GenerateHeaders, excelProps }
+
+interface importData {
+    programConfig: ProgramConfig
+    sectionType?: string
+    seletedSectionDataStore?: DataStoreRecord
+    updating?: boolean
+    orgUnit?: string,
+}
+
+export { ExportData, GenerateHeaders, excelProps, importData }
