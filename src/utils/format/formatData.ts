@@ -21,17 +21,20 @@ export function dataValues(data: DataValuesProps[], stageId: string): RowsDataPr
     return localData
 }
 
-export function attendanceFormater(event: AttendanceFormaterProps, attendanceConfig: Attendance): RowsDataProps {
+export function attendanceFormater(events: AttendanceFormaterProps[], attendanceConfig: Attendance): RowsDataProps {
     const localData: RowsDataProps = {}
     let status: string = ""
 
-    for (const dataValue of event.dataValues) {
-        if (attendanceConfig?.status === dataValue.dataElement) {
-            status = dataValue.value
-        }
-    }
+    for (const event of events) {
+        for (const dataValue of event.dataValues) {
 
-    localData[event.occurredAt?.split("T")?.[0]] = status
+            if (attendanceConfig?.status === dataValue.dataElement) {
+                status = dataValue.value
+            }
+        }
+    
+        localData[event.occurredAt?.split("T")?.[0]] = status
+    }
 
     return localData
 }

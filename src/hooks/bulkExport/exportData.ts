@@ -62,7 +62,6 @@ export function useExportData(props: ExportData) {
                 data = await getData()
 
                 if (module != modules.enrollment) {
-                    console.log(module)
                     for (let teisCounter = 0; teisCounter < data.length; teisCounter++) {
                         for (let a = 0; a < stagesToExport.length; a++) {
 
@@ -77,15 +76,16 @@ export function useExportData(props: ExportData) {
                                 programStage: stagesToExport[a],
                                 fields: "event,trackedEntity,occurredAt,enrollment,dataValues[dataElement,value]",
                                 trackedEntity: data[teisCounter].trackedEntity,
+                                skipPaging: true
                             }).then((resp) => {
 
-                                const dataValues = resp?.find((x: any) => x.enrollment === data[teisCounter].enrollment)
+                                const events = resp?.filter((x: any) => x.enrollment === data[teisCounter].enrollment)
 
                                 data[teisCounter] = {
                                     ...data[teisCounter], ...formatSheetData({
                                         module: module,
                                         stageId: stagesToExport[a],
-                                        dataV: dataValues,
+                                        events: events,
                                         dataStore: seletedSectionDataStore as unknown as DataStoreRecord
                                     })
                                 }

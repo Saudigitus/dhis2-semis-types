@@ -41,7 +41,7 @@ export function generateAttendanceEventObjects(programStages: string[], data: an
                 if (student[programStage][key]) {
                     attendanceEvents.push({
                         occurredAt: key,
-                        trackedEntityInstance: trackedEntity,
+                        trackedEntity: trackedEntity,
                         ...rest,
                         progam: progam,
                         dataValues: [
