@@ -160,7 +160,7 @@ interface excelProps {
 }
 
 
-interface importData {
+interface importProps {
     programConfig: ProgramConfig
     sectionType?: string
     seletedSectionDataStore?: DataStoreRecord
@@ -168,4 +168,17 @@ interface importData {
     orgUnit?: string,
 }
 
-export { ExportData, GenerateHeaders, excelProps, importData }
+enum importStrategy {
+    CREATE = "CREATE_AND_UPDATE",
+    UPDATE = "UPDATE"
+}
+
+interface importData {
+    excelData: {
+        module: "attendance" | "final-result" | "enrollment" | "performance",
+        mapping: []
+    }
+    importMode: "VALIDATE" | "COMMIT"
+}
+
+export { ExportData, GenerateHeaders, excelProps, importProps, importStrategy, importData }

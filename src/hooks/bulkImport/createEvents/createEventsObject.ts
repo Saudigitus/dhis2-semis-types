@@ -1,14 +1,15 @@
 import { format } from "date-fns"
 import { ProgramConfig } from "../../../types/programConfig/ProgramConfig"
+import { DataStoreRecord } from "../../../types/dataStore/DataStoreConfig"
 
-export function generateEventObjects(programStages: string[], data: any, progam: string) {
+export function generateEventObjects(programStages: string[], data: any, program: string) {
     let events: any = []
 
     for (const student of data) {
         const { trackedEntity, ...rest } = student.Ids
 
         for (const programStage of programStages) {
-            let eventProperties: any = { dataValues: [], progam: progam }
+            let eventProperties: any = { dataValues: [], program: program }
 
             for (const key of Object.keys(student[programStage])) {
                 if (student[programStage][key]) {
@@ -18,6 +19,7 @@ export function generateEventObjects(programStages: string[], data: any, progam:
                     })
                 }
             }
+
             events.push({
                 trackedEntityInstance: trackedEntity,
                 ...rest,
@@ -30,7 +32,7 @@ export function generateEventObjects(programStages: string[], data: any, progam:
     return { events }
 }
 
-export function generateAttendanceEventObjects(programStages: string[], data: any, progam: string, status: string) {
+export function generateAttendanceEventObjects(programStages: string[], data: any, dataStore: DataStoreRecord) {
     let attendanceEvents: any = []
 
     for (const student of data) {
@@ -41,12 +43,13 @@ export function generateAttendanceEventObjects(programStages: string[], data: an
                 if (student[programStage][key]) {
                     attendanceEvents.push({
                         occurredAt: key,
-                        trackedEntity: trackedEntity,
+                        trackedEntity,
                         ...rest,
-                        progam: progam,
+                        program: dataStore.program,
+                        programStage: dataStore.attendance.programStage,
                         dataValues: [
                             {
-                                dataElement: status,
+                                dataElement: dataStore.attendance.status,
                                 value: student[programStage][key]
                             }
                         ]

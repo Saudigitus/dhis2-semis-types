@@ -1,13 +1,15 @@
-import { importData } from "../../types/bulk/bulkOperations";
+import { importData, importProps } from "../../types/bulk/bulkOperations";
 import { modules } from "../../types/common/moduleTypes";
+import { DataStoreRecord } from "../../types/dataStore/DataStoreConfig";
 import { generateAttendanceEventObjects, generateEnrollmentData, generateEventObjects } from "./createEvents/createEventsObject";
 import { postValues } from "./postEvents/postEvents";
 
-export function useImportData(props: importData) {
+export function useImportData(props: importProps) {
     const { programConfig, seletedSectionDataStore, updating = false, sectionType = 'student', orgUnit } = props
-    const { postData, stats, postAttendanceData } = postValues()
+    const { postData, postAttendanceData, stats } = postValues()
 
-    async function importData(excelData: { module: "attendance" | "final-result" | "enrollment" | "performance", mapping: [] }) {
+    async function importProps(props: importData) {
+        const { excelData, importMode } = props
         const studentsData = excelData.mapping
         const profile = sectionType.substring(0, 1).toUpperCase() + sectionType.substring(1, sectionType.length) + ' profile'
         const progrmStages = [
@@ -24,7 +26,7 @@ export function useImportData(props: importData) {
 
         switch (excelData.module) {
             case modules.attendance:
-                const { attendanceEvents } = generateAttendanceEventObjects(displayNames, studentsData, programConfig.id, seletedSectionDataStore?.attendance.status as unknown as string)
+                const { attendanceEvents } = generateAttendanceEventObjects(displayNames, studentsData, seletedSectionDataStore as unknown as DataStoreRecord)
                 const attendanceDisplayName = programConfig.programStages.find(x => x.id === seletedSectionDataStore?.attendance.programStage)?.displayName
 
                 await postAttendanceData(
@@ -32,7 +34,8 @@ export function useImportData(props: importData) {
                     attendanceDisplayName as unknown as string,
                     seletedSectionDataStore?.attendance.programStage as unknown as string,
                     excelData.mapping,
-                    programConfig.id
+                    programConfig.id,
+                    importMode
                 )
                 break;
 
@@ -54,5 +57,6 @@ export function useImportData(props: importData) {
         }
     }
 
-    return { importData }
+    console.log(stats)
+    return { importProps }
 }

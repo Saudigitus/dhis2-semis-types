@@ -1,14 +1,27 @@
 import { format } from "date-fns";
-import { modules } from "../../../types/common/moduleTypes";
 import { useGetEvents } from "../../events/useGetEvents";
 import useUploadEvents from "../../events/useUploadEvents";
+import { splitArrayIntoChunks } from "../../../utils/common/splitArray";
+import { importData, importStrategy } from "../../../types/bulk/bulkOperations";
+import { importSummary } from "../../../utils/common/getImportSummary";
+import { useState } from 'react'
 
 export function postValues() {
-    const { stats, uploadValues } = useUploadEvents()
+    const { uploadValues } = useUploadEvents()
     const { getEvents, error: eventsError } = useGetEvents()
+    const [stats, setStats] = useState<any>({})
 
-    async function postAttendanceData(events: any[], programStageName: string, programStageId: string, excelData: any[], program: string) {
-        let newEvents: any = [], updateEvents: any = []
+    async function postAttendanceData(
+        events: any[],
+        programStageName: string,
+        programStageId: string,
+        excelData: any[],
+        program: string,
+        importMode: importData["importMode"]
+    ) {
+        let values: any = { CREATE: [], UPDATE: [] }
+        const keys = Object.keys(values)
+        let updatedStats: any = { stats: { ignored: 0, created: 0, updated: 0, total: 0 }, errorDetails: [] }
 
         for (const student of excelData as unknown as []) {
 
@@ -39,20 +52,29 @@ export function postValues() {
 
                 thisTeiEvents.forEach(event => {
                     if (alreadyExistingEvents[event.occurredAt]) {
-                        updateEvents.push({ ...event, event: alreadyExistingEvents[event.occurredAt] });
+                        values.UPDATE.push({ ...event, event: alreadyExistingEvents[event.occurredAt] });
                     } else {
-                        newEvents.push(event);
+                        values.CREATE.push(event);
                     }
                 });
             })
         }
 
-        console.log(newEvents, updateEvents)
+        for (const key of keys) {
+            const chunks = splitArrayIntoChunks(values[key], 50);
+
+            for (const chunk of chunks) {
+                const response = await uploadValues({ events: chunk }, importMode, importStrategy[key]);
+                updatedStats = importSummary(response, updatedStats)
+            }
+        }
+
+        setStats(updatedStats)
     }
 
     async function postData(data: any[], module: "attendance" | "final-result" | "enrollment" | "performance", orgUnit: string, excelData?: any[]) {
 
     }
 
-    return { postData, stats, postAttendanceData }
+    return { postData, postAttendanceData, stats }
 }
