@@ -9,14 +9,14 @@ import { useImportData } from '../hooks/bulkImport/useImportData'
 
 function MyApp() {
     const { getProgram, programConfig } = useGetProgramConfig()
-    const { importProps } = useImportData({ programConfig, seletedSectionDataStore: student, orgUnit: "Shc3qNhrPAz" })
+    const { importProps, stats } = useImportData({ programConfig, seletedSectionDataStore: student, orgUnit: "Shc3qNhrPAz" })
 
     const { exportData } = useExportData({
         fileName: "test33e",
         orgUnit: "Shc3qNhrPAz",
         orgUnitName: "Albion LBS",
-        stagesToExport: [student.attendance.programStage],
-        module: "attendance",
+        stagesToExport: [student.registration.programStage],
+        module: "enrollment",
         sectionType: "student",
         eventFilters: [`iDSrFrrVgmX:in:2023`],
         startDate: '2024-07-16',
@@ -32,11 +32,11 @@ function MyApp() {
     const UseValidation = new useValidation()
 
     const onValidation = async (file: File) => {
-        const module = modules.attendance
+        const module = modules.enrollment
 
         UseValidation.setModule(module)
         const data = await UseValidation.validation(file[0])
-        importProps({ excelData: data, importMode: 'VALIDATE' })
+        importProps({ excelData: data, importMode: 'COMMIT' })
     }
 
     return (

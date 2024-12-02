@@ -14,9 +14,7 @@ export function getCommonSheetData(props: ExportData) {
             fields: "trackedEntity,enrollment,orgUnit,program",
             filter: eventFilters,
             orgUnit,
-            skipPaging: false,
-            pageSize: 2,
-            page: 1,
+            skipPaging: true,
             ouMode: 'SELECTED',
             order: seletedSectionDataStore?.defaults.defaultOrder
         })

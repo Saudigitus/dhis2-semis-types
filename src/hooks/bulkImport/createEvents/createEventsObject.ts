@@ -2,14 +2,15 @@ import { format } from "date-fns"
 import { ProgramConfig } from "../../../types/programConfig/ProgramConfig"
 import { DataStoreRecord } from "../../../types/dataStore/DataStoreConfig"
 
-export function generateEventObjects(programStages: string[], data: any, program: string) {
+export function generateEventObjects(programStages: string[], data: any, programConfig: ProgramConfig) {
     let events: any = []
 
     for (const student of data) {
         const { trackedEntity, ...rest } = student.Ids
 
         for (const programStage of programStages) {
-            let eventProperties: any = { dataValues: [], program: program }
+            let eventProperties: any = { dataValues: [], program: programConfig.id }
+            const programStageID = programConfig.programStages.find(x => x.displayName == programStage)?.id
 
             for (const key of Object.keys(student[programStage])) {
                 if (student[programStage][key]) {
@@ -24,6 +25,7 @@ export function generateEventObjects(programStages: string[], data: any, program
                 trackedEntityInstance: trackedEntity,
                 ...rest,
                 ...eventProperties,
+                programStage: programStageID,
                 occurredAt: format(new Date(), 'yyyy-MM-dd')
             })
         }
@@ -62,7 +64,7 @@ export function generateAttendanceEventObjects(programStages: string[], data: an
     return { attendanceEvents }
 }
 
-export function generateEnrollmentData(profile: string, programConfig: ProgramConfig, stagesToIgnore: string[], data: any, orgUnit: string) {
+export function generateEnrollmentData(profile: string, programConfig: ProgramConfig, stagesToIgnore: string[], data: any, orgUnit: string, updating: boolean) {
     let enrollments: any = []
     const programStages = programConfig.programStages.map((x) => {
         if (!stagesToIgnore.includes(x.id)) return { id: x.id, name: x.displayName }
@@ -70,6 +72,7 @@ export function generateEnrollmentData(profile: string, programConfig: ProgramCo
 
     for (const student of data) {
         let events: any = [], att: any = []
+        const { enrollment, trackedEntity } = student.Ids
 
         for (const stage of programStages) {
             let dataValues: any = []
@@ -94,7 +97,8 @@ export function generateEnrollmentData(profile: string, programConfig: ProgramCo
                 dataValues: dataValues,
                 status: "ACTIVE",
                 occurredAt: format(new Date(), 'yyyy-MM-dd'),
-                programStage: stage.id
+                programStage: stage.id,
+                ...(updating ? { trackedEntity: trackedEntity } : {})
             })
         }
 
@@ -104,7 +108,7 @@ export function generateEnrollmentData(profile: string, programConfig: ProgramCo
                 att = [
                     ...att,
                     {
-                        attribute: key.split(".")[1],
+                        attribute: key,
                         value: student[profile][key]
                     }
                 ]
@@ -116,8 +120,10 @@ export function generateEnrollmentData(profile: string, programConfig: ProgramCo
             program: programConfig.id,
             orgUnit: orgUnit,
             status: "COMPLETED",
+            attributes: att,
             occurredAt: format(new Date(), 'yyyy-MM-dd'),
             enrolledAt: format(new Date(), 'yyyy-MM-dd'),
+            ...(updating ? { enrollment: enrollment } : {})
         })
     }
 

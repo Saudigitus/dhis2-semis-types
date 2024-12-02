@@ -164,7 +164,6 @@ interface importProps {
     programConfig: ProgramConfig
     sectionType?: string
     seletedSectionDataStore?: DataStoreRecord
-    updating?: boolean
     orgUnit?: string,
 }
 
@@ -174,6 +173,7 @@ enum importStrategy {
 }
 
 interface importData {
+    updating?: boolean
     excelData: {
         module: "attendance" | "final-result" | "enrollment" | "performance",
         mapping: []
