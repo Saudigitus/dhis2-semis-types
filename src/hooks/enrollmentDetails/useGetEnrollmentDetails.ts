@@ -4,6 +4,7 @@ import { useGetEvents } from '../events/useGetEvents';
 import { ExportData } from '../../types/bulk/bulkOperations';
 import { attributes, dataValues } from '../../utils/format/formatData';
 import { modules } from '../../types/common/moduleTypes';
+import { format } from 'date-fns';
 
 export function useGetEnrollmentData(props: ExportData) {
     const { getTei } = useGetTei()
@@ -57,7 +58,7 @@ export function useGetEnrollmentData(props: ExportData) {
                             ref: "" + counter + " ",
                             school: orgUnitName,
                             orgUnit: currEnrollmentRegistration?.orgUnit,
-                            enrollmentDate: currEnrollmentRegistration?.occurredAt,
+                            enrollmentDate: format(new Date(currEnrollmentRegistration?.occurredAt), 'yyyy-MM-dd'),
                             enrollment: enrollment,
                             trackedEntity: tei.trackedEntity,
                             ...attributes(tei?.attributes ?? []),

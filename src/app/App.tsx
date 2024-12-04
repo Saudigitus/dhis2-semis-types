@@ -15,14 +15,15 @@ function MyApp() {
         fileName: "test33e",
         orgUnit: "Shc3qNhrPAz",
         orgUnitName: "Albion LBS",
-        stagesToExport: [student.registration.programStage],
-        module: "enrollment",
+        stagesToExport: [student.attendance.programStage],
+        module: "attendance",
         sectionType: "student",
         eventFilters: [`iDSrFrrVgmX:in:2023`],
         startDate: '2024-07-16',
         endDate: "2024-11-21",
         seletedSectionDataStore: student,
         programConfig,
+        empty: false
     })
 
     useEffect(() => {
