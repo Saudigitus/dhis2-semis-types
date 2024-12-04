@@ -1,4 +1,4 @@
-import { importData, importProps } from "../../types/bulk/bulkOperations";
+import { importData } from "../../types/bulk/bulkOperations";
 import { modules } from "../../types/common/moduleTypes";
 import { DataStoreRecord } from "../../types/dataStore/DataStoreConfig";
 import { generateAttendanceEventObjects, generateEnrollmentData, generateEventObjects } from "./createEvents/createEventsObject";
@@ -7,15 +7,14 @@ import { postEnrollmentData } from "./postEvents/postEnrollment";
 import { postValues } from "./postEvents/postEvents";
 import { useState } from 'react'
 
-export function useImportData(props: importProps) {
+export function useImportData() {
     const [stats, setStats] = useState<any>()
-    const { programConfig, seletedSectionDataStore, sectionType = 'student', orgUnit } = props
     const { postData } = postValues({ setStats })
     const { postAttendance } = postAttendanceValues({ setStats })
     const { postEnrollments } = postEnrollmentData({ setStats })
 
     async function importData(props: importData) {
-        const { excelData, importMode, updating = false } = props
+        const { excelData, importMode, updating = false, programConfig, seletedSectionDataStore, orgUnit, sectionType } = props
         const studentsData = excelData.mapping
         const profile = sectionType.substring(0, 1).toUpperCase() + sectionType.substring(1, sectionType.length) + ' profile'
         const programStages = [

@@ -10,7 +10,7 @@ import { DataStoreRecord } from '../types/dataStore/DataStoreConfig'
 
 function MyApp() {
     const { getProgram, programConfig } = useGetProgramConfig()
-    const { importData, stats } = useImportData({ programConfig, seletedSectionDataStore: student as unknown as DataStoreRecord, orgUnit: "Shc3qNhrPAz" })
+    const { importData, stats } = useImportData()
 
     const { exportData } = useExportData({
         fileName: "test33e",
@@ -37,7 +37,14 @@ function MyApp() {
 
         UseValidation.setModule(module)
         const data = await UseValidation.validation(file[0])
-        importData({ excelData: data, importMode: 'COMMIT' })
+        importData({
+            excelData: data,
+            importMode: 'COMMIT',
+            programConfig,
+            seletedSectionDataStore: student as unknown as DataStoreRecord,
+            orgUnit: "Shc3qNhrPAz",
+            sectionType: 'student'
+        })
     }
 
     return (
