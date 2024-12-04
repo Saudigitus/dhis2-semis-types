@@ -4,12 +4,10 @@ import { importSummary } from "../../../utils/common/getImportSummary"
 import { splitArrayIntoChunks } from "../../../utils/common/splitArray"
 import { useGetEvents } from "../../events/useGetEvents"
 import useUploadEvents from "../../events/useUploadEvents"
-import { useState } from 'react'
 
-export function postAttendanceValues() {
+export function postAttendanceValues({ setStats }) {
     const { uploadValues } = useUploadEvents()
     const { getEvents, error: eventsError } = useGetEvents()
-    const [attendanceStats, setStats] = useState<any>({})
     let updatedStats: any = { stats: { ignored: 0, created: 0, updated: 0, total: 0 }, errorDetails: [] }
 
     async function postAttendance(
@@ -71,5 +69,5 @@ export function postAttendanceValues() {
         setStats(updatedStats)
     }
 
-    return { postAttendance, attendanceStats }
+    return { postAttendance }
 }

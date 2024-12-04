@@ -5,15 +5,17 @@ import { generateAttendanceEventObjects, generateEnrollmentData, generateEventOb
 import { postAttendanceValues } from "./postEvents/postAttendance";
 import { postEnrollmentData } from "./postEvents/postEnrollment";
 import { postValues } from "./postEvents/postEvents";
+import { useState } from 'react'
 
 export function useImportData(props: importProps) {
+    const [stats, setStats] = useState<any>()
     const { programConfig, seletedSectionDataStore, sectionType = 'student', orgUnit } = props
-    const { postData, stats } = postValues()
-    const { postAttendance, attendanceStats } = postAttendanceValues()
-    const { postEnrollments, enrollmentStats } = postEnrollmentData()
+    const { postData } = postValues({ setStats })
+    const { postAttendance } = postAttendanceValues({ setStats })
+    const { postEnrollments } = postEnrollmentData({ setStats })
 
-    async function importProps(props: importData) {
-        const { excelData, importMode, updating = true } = props
+    async function importData(props: importData) {
+        const { excelData, importMode, updating = false } = props
         const studentsData = excelData.mapping
         const profile = sectionType.substring(0, 1).toUpperCase() + sectionType.substring(1, sectionType.length) + ' profile'
         const programStages = [
@@ -44,6 +46,11 @@ export function useImportData(props: importProps) {
                 break;
 
             case modules.enrollment:
+                /**
+                 * Ao se registar um novo estudante criam-se eventos de todos os program stages, excepto attendance e transfer e 
+                 * ao se actualizar o estudante nao se cria nenhum evento, sendo assim, esse array terá uma lista de todos os 
+                 * program stages que devem ser ignorados na hora de actualizar e/ou registar um novo estudante
+                 */
                 const stagesToIgnore = [
                     seletedSectionDataStore?.attendance.programStage as unknown as string,
                     seletedSectionDataStore?.transfer.programStage as unknown as string,
@@ -69,7 +76,8 @@ export function useImportData(props: importProps) {
                     importMode,
                     programConfig.id,
                     updating,
-                    seletedSectionDataStore as unknown as DataStoreRecord
+                    seletedSectionDataStore as unknown as DataStoreRecord,
+                    orgUnit as unknown as string
                 )
                 break
 
@@ -81,5 +89,5 @@ export function useImportData(props: importProps) {
         }
     }
 
-    return { importProps, stats }
+    return { importData, stats }
 }

@@ -55,7 +55,7 @@ export function useExportData(props: ExportData) {
             setError('The date format is not correct, the expected date format is: yyyy-MM-dd')
         } else {
             let data: any = []
-            const { filters, formatedHeaders, toGenerate } = getHeaders()
+            const { filters, formatedHeaders, toGenerate, defaultLockedHeaders } = getHeaders()
             const metadata = getMetaData(programConfig, stagesToExport)
 
             if (!empty) {
@@ -108,7 +108,7 @@ export function useExportData(props: ExportData) {
                 setError('empty só é aplicavel para o módulo do enrollment!')
             }
 
-            await excelGenerator({ headers: formatedHeaders, rows: data, filters, fileName, metadata, module, empty })
+            await excelGenerator({ headers: formatedHeaders, rows: data, filters, fileName, metadata, module, empty, defaultLockedHeaders })
         }
     }
 

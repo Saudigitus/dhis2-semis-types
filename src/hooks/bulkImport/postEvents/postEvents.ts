@@ -3,13 +3,11 @@ import useUploadEvents from "../../events/useUploadEvents";
 import { splitArrayIntoChunks } from "../../../utils/common/splitArray";
 import { importData, importStrategy } from "../../../types/bulk/bulkOperations";
 import { importSummary } from "../../../utils/common/getImportSummary";
-import { useState } from 'react'
 import { ProgramConfig } from "../../../types/programConfig/ProgramConfig";
 
-export function postValues() {
+export function postValues({ setStats }) {
     const { uploadValues } = useUploadEvents()
     const { getEvents, error: eventsError } = useGetEvents()
-    const [stats, setStats] = useState<any>({})
     let updatedStats: any = { stats: { ignored: 0, created: 0, updated: 0, total: 0 }, errorDetails: [] }
 
     async function postData(
@@ -33,7 +31,7 @@ export function postValues() {
                     trackedEntity: trackedEntity,
                     skipPaging: true
                 }).then((resp: any) => {
-                    let event = resp.find(x => x.enrollment === enrollment && x.programStage == stage)?.event
+                    let event = resp.find((x: any) => x.enrollment === enrollment && x.programStage == stage)?.event
                     const index = copyData.findIndex(x => x.enrollment === enrollment && x.programStage == stage)
                     copyData[index] = { ...copyData[index], event: event }
                 })
@@ -46,10 +44,10 @@ export function postValues() {
             const response = await uploadValues({ events: chunk }, importMode, importStrategy.UPDATE);
             updatedStats = importSummary(response, updatedStats)
         }
-        
+
         setStats(updatedStats)
     }
 
-    return { postData, stats }
+    return { postData }
 }
 

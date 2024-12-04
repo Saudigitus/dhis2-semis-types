@@ -6,8 +6,7 @@ import useUploadEvents from "../../events/useUploadEvents";
 import { splitArrayIntoChunks } from "../../../utils/common/splitArray";
 import { importSummary } from "../../../utils/common/getImportSummary";
 
-export function postEnrollmentData() {
-    const [enrollmentStats, setStats] = useState<any>({})
+export function postEnrollmentData({ setStats }) {
     const { getEvents, error: eventsError } = useGetEvents()
     const { uploadValues } = useUploadEvents()
 
@@ -17,7 +16,8 @@ export function postEnrollmentData() {
         importMode: importData["importMode"],
         program: string,
         updating: boolean,
-        dataStore: DataStoreRecord
+        dataStore: DataStoreRecord,
+        orgUnit: string
     ) {
         let copyData = [...enrollments], updatedStats: any = { stats: { ignored: 0, created: 0, updated: 0, total: 0 }, errorDetails: [] }
 
@@ -52,6 +52,18 @@ export function postEnrollmentData() {
                     }
                 })
             }
+        } else {
+            for (let index = 0; index < copyData.length; index++) {
+                const { ...props } = copyData[index]
+
+                copyData[index] = {
+                    trackedEntityType: dataStore.trackedEntityType,
+                    orgUnit: orgUnit,
+                    enrollments: [{
+                        ...props,
+                    }]
+                }
+            }
         }
 
         const chunks = splitArrayIntoChunks(copyData, 50);
@@ -64,5 +76,5 @@ export function postEnrollmentData() {
         setStats(updatedStats)
     }
 
-    return { postEnrollments, enrollmentStats }
+    return { postEnrollments }
 }

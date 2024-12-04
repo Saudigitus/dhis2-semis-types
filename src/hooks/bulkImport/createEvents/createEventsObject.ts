@@ -71,22 +71,25 @@ export function generateEnrollmentData(profile: string, programConfig: ProgramCo
     }).filter(x => x != undefined)
 
     for (const student of data) {
-        let events: any = [], att: any = []
-        const { enrollment, trackedEntity } = student.Ids
+        let events: any = [], att: any = [], enrollmentDate: any = null
 
         for (const stage of programStages) {
             let dataValues: any = []
 
             if (student[stage.name]) {
                 for (const key of Object.keys(student[stage.name])) {
-                    if (student[stage.name][key]) {
-                        dataValues = [
-                            ...dataValues,
-                            {
-                                dataElement: key.split(".")[1],
-                                value: student[stage.name][key]
-                            }
-                        ]
+                    if (student[stage.name][key] && key.split('.')[1] || key === 'enrollmentDate') {
+                        if (key === 'enrollmentDate') {
+                            enrollmentDate = student[stage.name]['enrollmentDate']
+                        } else {
+                            dataValues = [
+                                ...dataValues,
+                                {
+                                    dataElement: key.split(".")[1],
+                                    value: student[stage.name][key]
+                                }
+                            ]
+                        }
                     }
                 }
             }
@@ -98,7 +101,7 @@ export function generateEnrollmentData(profile: string, programConfig: ProgramCo
                 status: "ACTIVE",
                 occurredAt: format(new Date(), 'yyyy-MM-dd'),
                 programStage: stage.id,
-                ...(updating ? { trackedEntity: trackedEntity } : {})
+                ...(updating ? { trackedEntity: student.Ids.trackedEntity } : {})
             })
         }
 
@@ -122,8 +125,8 @@ export function generateEnrollmentData(profile: string, programConfig: ProgramCo
             status: "COMPLETED",
             attributes: att,
             occurredAt: format(new Date(), 'yyyy-MM-dd'),
-            enrolledAt: format(new Date(), 'yyyy-MM-dd'),
-            ...(updating ? { enrollment: enrollment } : {})
+            enrolledAt: format(new Date(enrollmentDate), 'yyyy-MM-dd'),
+            ...(updating ? { enrollment: student.Ids.enrollment } : {})
         })
     }
 

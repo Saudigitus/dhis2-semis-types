@@ -16,7 +16,7 @@ export function gererateFile({ unavailableDays }: { unavailableDays: (date: Date
         let sheet: any = {};
         const regex = /^\d{4}-\d{2}-\d{2}$/
         const workbook = new Excel.Workbook();
-        const { headers, rows, filters, fileName, metadata, module, empty } = props
+        const { headers, rows, filters, fileName, metadata, module, empty, defaultLockedHeaders } = props
         const workSheets = { ...(module === modules.attendance ? separateByMonth(headers.find(x => x.name === 'Attendance').headers) : { [module]: module }) }
         const { validationHeaders, validationRows } = generateValidationSheet(filters)
 
@@ -97,7 +97,10 @@ export function gererateFile({ unavailableDays }: { unavailableDays: (date: Date
                     const dataElementId = colKey.split(".")
                     const cell = row.getCell(colIndex);
 
-                    if (empty && colKey != 'ref' && index > 2) cell.protection = { locked: false }
+                    if (index > 2) {
+                        if (empty && colKey != 'ref') cell.protection = { locked: false }
+                        else if (!empty && !defaultLockedHeaders.includes(cell._column._header)) cell.protection = { locked: false }
+                    }
 
                     if (filters?.[dataElementId[0]] || filters?.[dataElementId[1]] || (regex.test(columnHeader) && filters["Attendance"])) {
                         if (index > 2) {

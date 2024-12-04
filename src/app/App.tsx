@@ -6,24 +6,24 @@ import student from '../utils/constants/student.json'
 import { useGetProgramConfig } from '../hooks/programConfig/useGetprogramConfig'
 import { useExportData } from '../hooks/bulkExport/exportData'
 import { useImportData } from '../hooks/bulkImport/useImportData'
+import { DataStoreRecord } from '../types/dataStore/DataStoreConfig'
 
 function MyApp() {
     const { getProgram, programConfig } = useGetProgramConfig()
-    const { importProps, stats } = useImportData({ programConfig, seletedSectionDataStore: student, orgUnit: "Shc3qNhrPAz" })
+    const { importData, stats } = useImportData({ programConfig, seletedSectionDataStore: student as unknown as DataStoreRecord, orgUnit: "Shc3qNhrPAz" })
 
     const { exportData } = useExportData({
         fileName: "test33e",
         orgUnit: "Shc3qNhrPAz",
         orgUnitName: "Albion LBS",
-        stagesToExport: [student.attendance.programStage],
-        module: "attendance",
+        stagesToExport: [...student.performance.programStages.map(x => x.programStage)],
+        module: "performance",
         sectionType: "student",
         eventFilters: [`iDSrFrrVgmX:in:2023`],
         startDate: '2024-07-16',
         endDate: "2024-11-21",
-        seletedSectionDataStore: student,
-        programConfig,
-        empty: false
+        seletedSectionDataStore: student as unknown as DataStoreRecord,
+        programConfig
     })
 
     useEffect(() => {
@@ -33,16 +33,16 @@ function MyApp() {
     const UseValidation = new useValidation()
 
     const onValidation = async (file: File) => {
-        const module = modules.enrollment
+        const module = modules.final_result
 
         UseValidation.setModule(module)
         const data = await UseValidation.validation(file[0])
-        importProps({ excelData: data, importMode: 'COMMIT' })
+        importData({ excelData: data, importMode: 'COMMIT' })
     }
 
     return (
         <div>
-            <button onClick={async () => { await exportData() }} >Click-me</button>
+            <button onClick={async () => { await exportData() }} >Click-me To export</button>
             <DropZone accept='' onSave={(file) => onValidation(file)} />
         </div>
     )

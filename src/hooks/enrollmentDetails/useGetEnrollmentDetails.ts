@@ -38,7 +38,6 @@ export function useGetEnrollmentData(props: ExportData) {
                         })
 
                         if (withSocioEconomics || module === modules.enrollment) {
-                            console.log(module, 'moduleee')
                             socioEconomiscData = await getEvents({
                                 program: seletedSectionDataStore?.program as unknown as string,
                                 programStage: seletedSectionDataStore?.['socio-economics'].programStage as unknown as string,

@@ -21,16 +21,17 @@ export function generateHeaders(props: GenerateHeaders) {
 
     function getHeaders() {
         let formatedHeaders: any[] = [], toGenerate: any[] = []
+        const Profile = (sectionType ?? '').substring(0, 1).toUpperCase() + (sectionType ?? '').substring(1, (sectionType ?? '').length) + ' profile'
+        let defaultLockedHeaders: any = [Profile, "Ids"], filters = {}
         const stageHeaders = [seletedSectionDataStore.registration.programStage,
         ...((withSocioEconomics || module === modules.enrollment) ? [seletedSectionDataStore["socio-economics"].programStage] : []),
         ...(module != modules.enrollment ? stagesToExport : [])
         ]
-        let filters = {}
-
         const colors = {
             [seletedSectionDataStore.registration.programStage]: "FCE5CD",
             [seletedSectionDataStore["socio-economics"].programStage]: "FFFFC5"
         }
+
 
         for (const stageId of stageHeaders) {
             const currStage = programConfig?.programStages?.find(x => x.id == stageId)
@@ -58,6 +59,7 @@ export function generateHeaders(props: GenerateHeaders) {
                 let schoolKey: any = []
 
                 if (currStage?.id === seletedSectionDataStore.registration.programStage) {
+                    defaultLockedHeaders.push(currStage?.displayName)
                     const defaultHeaders = [
                         {
                             header: 'Ref',
@@ -114,7 +116,7 @@ export function generateHeaders(props: GenerateHeaders) {
         })
 
         formatedHeaders.splice(1, 0, {
-            name: (sectionType ?? '').substring(0, 1).toUpperCase() + (sectionType ?? '').substring(1, (sectionType ?? '').length) + ' profile', headers: [...(att || [])], fill: 'D9EAD3'
+            name: Profile, headers: [...(att || [])], fill: 'D9EAD3'
         });
 
         if (!empty)
@@ -123,7 +125,7 @@ export function generateHeaders(props: GenerateHeaders) {
                 headers: dfHeaders
             })
 
-        return { formatedHeaders, filters, toGenerate }
+        return { formatedHeaders, filters, toGenerate, defaultLockedHeaders }
     }
 
     return { getHeaders }

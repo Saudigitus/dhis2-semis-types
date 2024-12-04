@@ -157,6 +157,7 @@ interface excelProps {
     metadata: any[]
     module: string
     empty: boolean
+    defaultLockedHeaders: string[]
 }
 
 
