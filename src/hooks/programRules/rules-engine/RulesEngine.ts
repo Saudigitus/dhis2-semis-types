@@ -9,28 +9,66 @@ import { RulesEngineProps, RulesType } from "../../../types/programRules/RulesEn
 import { formatKeyValueType as formatValuesToKeyValue } from "../../../utils/programRules/formatKeyValueType";
 
 
+/**
+ * The function that implements the program rules.
+ * @returns {{ runRulesEngine: (data?: {}) => void; updatedVariables: any; }} The fields modified based on their values and program rule.
+ * 
+ *  @example
+ * Example usage:
+ export const RulesEngineForm = (props: any) => {
+    
+    const onError = (message: string) => {
+        console.error(message)
+    }
+
+    const { runRulesEngine, updatedVariables } = RulesEngine({
+        variables: [] // an array of valid variables,
+          values: { "id": "value", ...},
+        type: RulesType.ProgramStageSection,
+        onError: onError
+    })
+
+    useEffect(() => {
+        runRulesEngine(fields)
+    }, [values])
+
+    return (
+        <Form>
+            updatedVariables?.map((field: any, index: number) => {
+                return (
+                    <GroupForm
+                        key={index}
+                        name={field.section}
+                        fields={field.fields}
+                        description={field.description}
+                    />
+                )
+            })
+        </Form>
+    )
+}
+*/
 export const RulesEngine = (props: RulesEngineProps) => {
-    const { variables = [], values, type, programStage } = props
+    const { variables = [], values, type, programStage, onError } = props
     const formatKeyValueType = formatValuesToKeyValue(variables)
     const getOptionGroups = useRecoilValue(OptionGroupsConfigState)
-    const newProgramRules = useRecoilValue(ProgramRulesFormatedState)
-    const [updatedVariables, setupdatedVariables] = useState<any>([])
     const orgUnitsGroups = useRecoilValue(OrgUnitsGroupsConfigState)
-
+    const newProgramRules = useRecoilValue(ProgramRulesFormatedState)
+    const [updatedVariables, setUpdatedVariables] = useState<typeof variables>([])
 
     useEffect(() => {
         if (updatedVariables.length === 0) {
-            setupdatedVariables([...variables])
+            setUpdatedVariables([...variables] as typeof variables)
         }
     }, [variables])
 
-    function runRulesEngine(data?: any[]) {
+    function runRulesEngine(data?: typeof variables) {
         if (type === RulesType.ProgramStageSection) rulesEngineSections(data)
         else if (type === RulesType.ProgramStage) rulesEngineDataElements(data)
         else if (type === RulesType.AttributesSection) rulesEngineAttributesSections(data)
     }
 
-    // rules engine function for attributes/programSections
+    /** Rules engine function for attributes/programSections. */
     function rulesEngineAttributesSections(data: any[] = []) {
         const localVariablesSections = data?.length > 0 ? data : [...updatedVariables]
         const updatedVariablesCopy = localVariablesSections?.map(section => {
@@ -40,10 +78,10 @@ export const RulesEngine = (props: RulesEngineProps) => {
             });
             return updatedSection;
         });
-        setupdatedVariables(updatedVariablesCopy)
+        setUpdatedVariables(updatedVariablesCopy)
     }
 
-    // rules engine function for programStageSections
+    /** Rules engine function for programStageSections. */
     function rulesEngineSections(data: any[] = []) {
         const localVariablesSections = data?.length > 0 ? data : [...updatedVariables]
         const updatedVariablesCopy = localVariablesSections?.map(section => {
@@ -53,28 +91,25 @@ export const RulesEngine = (props: RulesEngineProps) => {
             });
             return updatedSection;
         });
-        setupdatedVariables(updatedVariablesCopy)
+        setUpdatedVariables(updatedVariablesCopy)
     }
 
-    // rules engine function for simple variables without sections
+    /** Rules engine function for simple variables without sections. */
     function rulesEngineDataElements(data: any[] = []) {
         const localVariables = data?.length > 0 ? data : [...updatedVariables]
         const updatedVariablesCopy = localVariables?.map(variable => {
             return applyRulesToVariable(variable);
         });
 
-        setupdatedVariables(updatedVariablesCopy);
+        setUpdatedVariables(updatedVariablesCopy);
     }
 
-    // apply rules to variables
+    /** Applies rules to variables. */
     function applyRulesToVariable(variable: any) {
         const newProgramRulesFiltered = newProgramRules.filter(x => x.variable === variable.name)
-        // const newProgramRulesFiltered = programStage ? newProgramRules.filter(x => x.programStage === programStage) : newProgramRules.filter(x => x.variable === variable.name)
+        // const newProgramRulesFiltered = !programStage ? newProgramRules.filter(x => x.programStage === programStage) : newProgramRules.filter(x => x.variable === variable.name)
 
-        console.log(Boolean(programStage), newProgramRulesFiltered, newProgramRules)
-        // console.log(newProgramRulesFiltered, variable)
         for (const programRule of newProgramRulesFiltered || []) {
-            // console.log(programRule, 40404)
             try {
                 switch (programRule.type) {
                     case "attribute":
@@ -82,37 +117,37 @@ export const RulesEngine = (props: RulesEngineProps) => {
                         switch (programRule.programRuleActionType) {
                             case "ASSIGN":
                                 if (variable.name === programRule.variable) {
-                                    // Obter a primeira condição e o valor associado
+                                    // Get the first condition and associated value
                                     const firstCondition = existValue(programRule.condition, values, formatKeyValueType);
                                     const value = executeFunctionName(programRule.functionName, existValue(programRule.data, values, formatKeyValueType));
 
                                     try {
-                                        // Avaliar a condição uma vez
+                                        //Evaluate the condition once
                                         const evaluatedCondition = eval(firstCondition ?? "");
 
-                                        // Verificar se a condição é uma string e o tipo de variável
+                                        // Check if the condition is a string and the variable type
                                         const isStringCondition = typeof evaluatedCondition === "string" || typeof evaluatedCondition === "boolean";
                                         const isValidType = formatKeyValueType![variable.name] !== "INTEGER_ZERO_OR_POSITIVE" && formatKeyValueType![variable.name] !== "NUMBER";
 
                                         if (isStringCondition && isValidType) {
                                             if (evaluatedCondition) {
-                                                // Atribuição de valores caso a condição seja verdadeira
+                                                // Assigning values ​​if the condition is true
                                                 values[variable.name] = value !== undefined ? value : "";
                                                 variable.value = value !== undefined ? value : "";
                                             }
                                         }
-                                        // Verificar se a condição é um número
+                                        // Check if the condition is a number
                                         else if (typeof evaluatedCondition === "number") {
                                             values[variable.name] = value !== undefined ? value : "";
                                             variable.value = value !== undefined ? value : "";
                                         }
 
-                                        // Desabilitar a variável após o processamento
+                                        // Disable the variable after processing
                                         variable.disabled = true;
 
                                     } catch (error) {
-                                        // Em caso de erro, desabilitar a variável
-                                        console.error("Erro ao avaliar a condição:", error);
+                                        // In case of error, disable the variable
+                                        onError(error)
                                         variable.disabled = true;
                                     }
                                 }
@@ -183,8 +218,9 @@ export const RulesEngine = (props: RulesEngineProps) => {
                         }
                         break;
                 }
-            } catch (error) {
-                console.log("Error when running programRules:", error)
+            }
+            catch (error) {
+                onError(error)
             }
 
         }
@@ -197,7 +233,7 @@ export const RulesEngine = (props: RulesEngineProps) => {
     }
 }
 
-// remove scpecial characters
+/** A function to remove characters that are not reconized on Js to make possible to run eval() function. */
 export function removeSpecialCharacters(text: string | undefined) {
     if (typeof text === "string") {
         return text
@@ -213,28 +249,28 @@ export function removeSpecialCharacters(text: string | undefined) {
     }
 }
 
-// replace condition with specific variable
+/** Replaces condition with specific variable. */
 export function replaceConditionVariables(condition: string | undefined, variables: Record<string, string | undefined>) {
     if (!condition) {
         return condition;
     }
 
-    // Regex para capturar palavras completas fora de aspas simples
+    // Regex to capture full words outside of single quotes
     const regex = /(\b\w+\b)(?=(?:[^']*'[^']*')*[^']*$)/g;
 
-    // Substituição
+    // Replacement
     const newcondition = condition.replace(regex, (match) => {
         return variables[match] !== undefined ? `'${variables[match]}'` : match;
     });
     return newcondition;
 }
 
-// get function name
+/** Gets function name of the program rule. */
 export function getFunctionExpression(condition: string | undefined) {
     return condition?.split("d2:")?.[1]?.split("(")[0];
 }
 
-// replace variables with specific value
+/** Replaces variables ids with specific value sent from the component which implements the rule. */
 export function replaceEspecifValue(values: Record<string, any>, variables: Record<string, string>, variable: string) {
     // eslint-disable-next-line no-prototype-builtins
     if (values.hasOwnProperty(variables[variable])) {
@@ -246,21 +282,22 @@ export function replaceEspecifValue(values: Record<string, any>, variables: Reco
     return false;
 }
 
+/** Verifies if a given string is a valid date. */
 function isDate(str: string) {
-    // Remove os parênteses se existirem
+    // Remove parentheses if they exist
     if (typeof str === 'string') {
         const cleanedStr = str?.replace(/[()]/g, '');
 
-        // Tenta criar um objeto Date
+        // Try to create a Date object
         const date = new Date(cleanedStr);
 
-        // Verifica se a data é válida
+        // Checks if the created date is valid
         return !isNaN(date.getTime());
     }
     return str;
 }
 
-// execute function
+/** Executes program rule condition or action function. */
 function executeFunctionName(functionName: string | undefined, condition: string | undefined) {
     switch (functionName) {
         case "hasValue":
@@ -284,6 +321,7 @@ function executeFunctionName(functionName: string | undefined, condition: string
     }
 }
 
+/** Returns a sustring given the string and indexs. */
 function returnSubstring(value: string) {
     const [stringToRepair, startStr, endStr] = value.replaceAll(")", "").split(",");
     const start = Number(startStr);
@@ -297,7 +335,7 @@ function returnSubstring(value: string) {
         return `'${repairedString}'`
 }
 
-//compare values in string
+/** Compares values in string. */
 function compareLength(condition: string) {
     const results: string[] = [];
     let newcondition = 'false'
@@ -316,7 +354,7 @@ function compareLength(condition: string) {
     return newcondition
 }
 
-// get years between dates
+/** Returns years between dates. */
 function d2YearsBetween(origin: string | undefined, condition: string[] | undefined): string | undefined {
     if (!origin || !condition || condition.length !== 1) {
         return undefined;
@@ -333,7 +371,7 @@ function d2YearsBetween(origin: string | undefined, condition: string[] | undefi
 
 
 
-// replace varieble by value from condition
+/** Replaces variable value with the corresponding condition. */
 export function existValue(condition: string | undefined, values: Record<string, any> = {}, formatKeyValueType: any) {
     let localCondition = condition as string;
     let valueToReturn = condition as string
@@ -372,6 +410,7 @@ export function existValue(condition: string | undefined, values: Record<string,
     return localCondition;
 }
 
+/** Gets the  valueType for variables of a section. */
 export function getValueTypeVariable(variables: any, variable: any) {
     let variableType = ""
     variables?.map((section: any) => {
