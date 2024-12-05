@@ -4,6 +4,7 @@ import { useGetEvents } from '../events/useGetEvents';
 import { ExportData } from '../../types/bulk/bulkOperations';
 import { attributes, dataValues } from '../../utils/format/formatData';
 import { modules } from '../../types/common/moduleTypes';
+import { format } from 'date-fns';
 
 export function useGetEnrollmentData(props: ExportData) {
     const { getTei } = useGetTei()
@@ -37,7 +38,6 @@ export function useGetEnrollmentData(props: ExportData) {
                         })
 
                         if (withSocioEconomics || module === modules.enrollment) {
-                            console.log(module, 'moduleee')
                             socioEconomiscData = await getEvents({
                                 program: seletedSectionDataStore?.program as unknown as string,
                                 programStage: seletedSectionDataStore?.['socio-economics'].programStage as unknown as string,
@@ -57,7 +57,7 @@ export function useGetEnrollmentData(props: ExportData) {
                             ref: "" + counter + " ",
                             school: orgUnitName,
                             orgUnit: currEnrollmentRegistration?.orgUnit,
-                            enrollmentDate: currEnrollmentRegistration?.occurredAt,
+                            enrollmentDate: format(new Date(currEnrollmentRegistration?.occurredAt), 'yyyy-MM-dd'),
                             enrollment: enrollment,
                             trackedEntity: tei.trackedEntity,
                             ...attributes(tei?.attributes ?? []),

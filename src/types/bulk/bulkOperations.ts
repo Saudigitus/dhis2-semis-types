@@ -157,6 +157,26 @@ interface excelProps {
     metadata: any[]
     module: string
     empty: boolean
+    defaultLockedHeaders: string[]
 }
 
-export { ExportData, GenerateHeaders, excelProps }
+
+enum importStrategy {
+    CREATE = "CREATE_AND_UPDATE",
+    UPDATE = "UPDATE"
+}
+
+interface importData {
+    updating?: boolean
+    excelData: {
+        module: "attendance" | "final-result" | "enrollment" | "performance",
+        mapping: []
+    }
+    importMode: "VALIDATE" | "COMMIT",
+    programConfig: ProgramConfig
+    sectionType: string
+    seletedSectionDataStore: DataStoreRecord
+    orgUnit?: string
+}
+
+export { ExportData, GenerateHeaders, excelProps, importStrategy, importData }

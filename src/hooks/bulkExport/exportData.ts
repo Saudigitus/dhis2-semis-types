@@ -55,14 +55,13 @@ export function useExportData(props: ExportData) {
             setError('The date format is not correct, the expected date format is: yyyy-MM-dd')
         } else {
             let data: any = []
-            const { filters, formatedHeaders, toGenerate } = getHeaders()
+            const { filters, formatedHeaders, toGenerate, defaultLockedHeaders } = getHeaders()
             const metadata = getMetaData(programConfig, stagesToExport)
 
             if (!empty) {
                 data = await getData()
 
                 if (module != modules.enrollment) {
-
                     for (let teisCounter = 0; teisCounter < data.length; teisCounter++) {
                         for (let a = 0; a < stagesToExport.length; a++) {
 
@@ -77,15 +76,16 @@ export function useExportData(props: ExportData) {
                                 programStage: stagesToExport[a],
                                 fields: "event,trackedEntity,occurredAt,enrollment,dataValues[dataElement,value]",
                                 trackedEntity: data[teisCounter].trackedEntity,
+                                skipPaging: true
                             }).then((resp) => {
 
-                                const dataValues = resp?.find((x: any) => x.enrollment === data[teisCounter].enrollment)
+                                const events = resp?.filter((x: any) => x.enrollment === data[teisCounter].enrollment)
 
                                 data[teisCounter] = {
                                     ...data[teisCounter], ...formatSheetData({
                                         module: module,
                                         stageId: stagesToExport[a],
-                                        dataV: dataValues,
+                                        events: events,
                                         dataStore: seletedSectionDataStore as unknown as DataStoreRecord
                                     })
                                 }
@@ -108,7 +108,7 @@ export function useExportData(props: ExportData) {
                 setError('empty só é aplicavel para o módulo do enrollment!')
             }
 
-            await excelGenerator({ headers: formatedHeaders, rows: data, filters, fileName, metadata, module, empty })
+            await excelGenerator({ headers: formatedHeaders, rows: data, filters, fileName, metadata, module, empty, defaultLockedHeaders })
         }
     }
 
