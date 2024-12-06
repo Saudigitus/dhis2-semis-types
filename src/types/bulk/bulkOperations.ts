@@ -175,8 +175,8 @@ interface importData {
     importMode: "VALIDATE" | "COMMIT",
     programConfig: ProgramConfig
     sectionType: string
-    seletedSectionDataStore: DataStoreRecord
+    selectedSectionDataStore: DataStoreRecord
     orgUnit?: string
 }
 
-export { ExportData, GenerateHeaders, excelProps, importStrategy, importData }
+export type { ExportData, GenerateHeaders, excelProps, importStrategy, importData }
