@@ -20,9 +20,9 @@ export function useImportData() {
         const programStages = [
             ...(
                 excelData.module != modules.enrollment ?
-                    selectedSectionDataStore?.[excelData.module as unknown as any].programStage ?
-                        [selectedSectionDataStore?.[excelData.module as unknown as any].programStage] :
-                        selectedSectionDataStore?.[excelData.module as unknown as any].programStages.map((x: any) => x.programStage)
+                    (selectedSectionDataStore as unknown as any)?.[excelData.module].programStage ?
+                        [(selectedSectionDataStore as unknown as any)?.[excelData.module].programStage] :
+                        (selectedSectionDataStore as unknown as any)?.[excelData.module].programStages.map((x: any) => x.programStage)
                     : []
             )
         ]

@@ -161,7 +161,7 @@ interface excelProps {
 }
 
 
-enum importStrategy {
+export enum importStrategy {
     CREATE = "CREATE_AND_UPDATE",
     UPDATE = "UPDATE"
 }
@@ -179,4 +179,4 @@ interface importData {
     orgUnit?: string
 }
 
-export type { ExportData, GenerateHeaders, excelProps, importStrategy, importData }
+export type { ExportData, GenerateHeaders, excelProps, importData }

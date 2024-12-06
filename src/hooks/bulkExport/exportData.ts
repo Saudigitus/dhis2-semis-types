@@ -96,7 +96,7 @@ export function useExportData(props: ExportData) {
                     }
                 }
             } else if (empty && module == modules.enrollment) {
-                let ids = {}
+                let ids: any = {}
 
                 for (const idToGenerate of toGenerate) {
                     const generatedIds = await generate(numberOfEmpyRows, idToGenerate) as unknown as any
