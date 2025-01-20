@@ -1,4 +1,4 @@
-import { OptionsProps } from "dhis2-semis-components"
+import { OptionsProps } from "../variables/AttributeColumns"
 
 interface programStageDataElements {
     displayInReports: boolean
