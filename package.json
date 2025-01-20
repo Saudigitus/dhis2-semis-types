@@ -1,0 +1,21 @@
+{
+  "name": "app_dos_near_miss",
+  "version": "2.2.0",
+  "private": true,
+  "description": "Optimized package.json for a TypeScript types-only application",
+  "dependencies": {
+    "app_dos_near_miss": "file:",
+    "zod": "^3.23.8"
+  },
+  "scripts": {
+    "build": "tsc",
+    "lib": "rimraf ./dist && npx tsc -b",
+    "install:clean": "rm -rf node_modules/ && rm -rf package-lock.json && npm install"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.1",
+    "rimraf": "^6.0.1",
+    "ts-node": "^10.9.2",
+    "typescript": "*"
+  }
+}
