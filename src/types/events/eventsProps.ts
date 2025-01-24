@@ -8,9 +8,13 @@ interface GetDataElementsProps {
     type?: keyof typeof DataElementFieldType
 }
 
+interface attributesProps {
+    attribute: string
+    value: string
+}
 interface dataValuesProps {
     dataElement: string
     value: string
 }
 
-export type { GetDataElementsProps, dataValuesProps }
+export type { GetDataElementsProps, dataValuesProps, attributesProps }
