@@ -2,14 +2,13 @@ import { VariablesTypes, CustomAttributeProps, OptionsProps } from "./types/vari
 import { Attribute } from "./types/generated/models"
 import { ProgramConfig } from './types/programConfig/ProgramConfig'
 import { GroupFormProps, FormProps } from './types/form/GroupFormProps'
-import { DataStoreProps, selectedDataStoreKey } from './types/dataStore/DataStoreConfig'
+import { DataStoreProps, selectedDataStoreKey, dataStoreShema } from './types/dataStore/DataStoreConfig'
 import { ProgramStageConfig, programStageDataElements } from "./types/programStageConfig/ProgramStageConfig"
 import { FormatResponseRowsProps, RowsDataProps } from './types/common/FormatRowsDataProps'
 
 export type {
     FormProps,
     GroupFormProps,
-    Attribute,
     CustomAttributeProps,
     OptionsProps,
     DataStoreProps,
@@ -22,5 +21,7 @@ export type {
 }
 
 export {
+    Attribute,
     VariablesTypes,
+    dataStoreShema
 }

@@ -4485,10 +4485,11 @@ detect-port@^1.3.0:
     debug "4"
 
 "dhis2-semis-types@file:.":
-  version "0.0.1"
+  version "1.3.0"
   dependencies:
     "@types/css-modules" "^1.0.5"
-    dhis2-semis-types "file:../../../../../../AppData/Local/Yarn/Cache/v6/npm-dhis2-semis-types-0.0.1-1b8ac533-3c30-4226-bc5c-95459c26c9e4-1737615786633/node_modules/dhis2-semis-types"
+    dhis2-semis-types "file:../../../../../AppData/Local/Yarn/Cache/v6/npm-dhis2-semis-types-1.3.0-eec8ef93-a871-4485-8c9f-267ed1430de9-1737725339028/node_modules/dhis2-semis-types"
+    typescript "^5.7.2"
     zod "^3.23.8"
 
 diff-sequences@^27.5.1:
@@ -9865,9 +9866,9 @@ typeface-roboto@^0.0.75:
   resolved "https://registry.npmjs.org/typeface-roboto/-/typeface-roboto-0.0.75.tgz"
   integrity sha512-VrR/IiH00Z1tFP4vDGfwZ1esNqTiDMchBEXYY9kilT6wRGgFoCAlgkEUMHb1E3mB0FsfZhv756IF0+R+SFPfdg==
 
-typescript@*, typescript@^5.6.3:
+typescript@^5.6.3, typescript@^5.7.2:
   version "5.7.3"
-  resolved "https://registry.npmjs.org/typescript/-/typescript-5.7.3.tgz"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.7.3.tgz#919b44a7dbb8583a9b856d162be24a54bf80073e"
   integrity sha512-84MVSjMEHP+FQRPy3pX9sTVV/INIex71s9TL2Gm5FG/WG1SqXeKyZ0k7/blY/4FdOzI12CBy1vGc4og/eus0fw==
 
 uglify-js@^3.1.4:
