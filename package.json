@@ -10,7 +10,7 @@
     ".": {
       "require": "./dist/index.js",
       "import": "./dist/index.js",
-      "types": "./dist/declaratjions/index.d.ts"
+      "types": "./dist/declarations/index.d.ts"
     }
   },
   "scripts": {
