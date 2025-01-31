@@ -10,6 +10,22 @@ interface GroupFormProps {
 
 interface FormProps {
     /**
+    * react-final-form Form instance
+    */
+    Form: any
+    /**
+     * Instead of clear the form (by default), what do want to do after cliking on the cancel button?
+     * @returns 
+     */
+    onCancel?: () => void
+
+    /**
+    * custom name for button that submits the form
+    *
+    * @type {string}
+    */
+    submitButtonLabel?: string
+    /**
      * The form fields 
      *
      * @type {GroupFormProps[]}
