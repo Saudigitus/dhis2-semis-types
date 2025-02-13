@@ -5,6 +5,12 @@ import { GroupFormProps, FormProps } from './types/form/GroupFormProps'
 import { DataStoreProps, selectedDataStoreKey, dataStoreSchema } from './types/dataStore/DataStoreConfig'
 import { ProgramStageConfig, programStageDataElements } from "./types/programStageConfig/ProgramStageConfig"
 import { FormatResponseRowsProps, RowsDataProps } from './types/common/FormatRowsDataProps'
+import { EnrollmentStatus } from "./types/api/WithRegistrationTypes"
+import { TableDataRefetch } from "./atoms/Refetch"
+
+export { TableDataRefetch }
+
+export { VariablesTypes, EnrollmentStatus, Attribute }
 
 export type {
     FormProps,
@@ -20,8 +26,4 @@ export type {
     RowsDataProps
 }
 
-export {
-    Attribute,
-    VariablesTypes,
-    dataStoreSchema
-}
+export { dataStoreSchema }
