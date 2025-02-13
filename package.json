@@ -1,6 +1,6 @@
 {
   "name": "dhis2-semis-types",
-  "version": "1.3.7",
+  "version": "1.3.9",
   "description": "",
   "license": "BSD-3-Clause",
   "private": false,
@@ -30,6 +30,7 @@
   "dependencies": {
     "@types/css-modules": "^1.0.5",
     "dhis2-semis-types": "file:",
+    "recoil": "^0.7.7",
     "typescript": "^5.7.2",
     "zod": "^3.16.0"
   },
