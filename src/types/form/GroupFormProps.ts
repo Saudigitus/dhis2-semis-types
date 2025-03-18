@@ -62,15 +62,6 @@ interface FormProps {
      * @type {(args: any) => void}
      */
     onFormSubtmit?: (e: any) => void
-
-    /**
-    * The function that will be executed when any key is clicked.
-    * 
-    * @returns keyboard event and form values in Record<string, any> format
-    * @type {(args: any) => void}
-    */
-    onKeyDown?: (event: KeyboardEvent, values: Record<string, any>) => void
-
     /**
      * If you want to show feedback while processing the data after submitting the form,
      * 
