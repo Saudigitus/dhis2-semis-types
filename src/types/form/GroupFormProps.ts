@@ -88,6 +88,7 @@ interface FormProps {
      * @type {?boolean}
      */
     withButtons?: boolean
+    setFormValues?: (e: any) => void;
 }
 
 export type { GroupFormProps, FormProps }
