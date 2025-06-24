@@ -7,10 +7,11 @@ import { ProgramStageConfig, programStageDataElements } from "./types/programSta
 import { FormatResponseRowsProps, RowsDataProps } from './types/common/FormatRowsDataProps'
 import { EnrollmentStatus } from "./types/api/WithRegistrationTypes"
 import { TableDataRefetch } from "./atoms/Refetch"
+import { Modules } from "./types/variables/SemisTypes"
 
 export { TableDataRefetch }
 
-export { VariablesTypes, EnrollmentStatus, Attribute }
+export { VariablesTypes, EnrollmentStatus, Attribute, Modules }
 
 export type {
     FormProps,

@@ -62,7 +62,6 @@ interface FormProps {
      * @type {(args: any) => void}
      */
     onFormSubtmit?: (e: any) => void
-
     /**
      * If you want to show feedback while processing the data after submitting the form,
      * 
@@ -89,6 +88,7 @@ interface FormProps {
      * @type {?boolean}
      */
     withButtons?: boolean
+    setFormValues?: (e: any) => void;
 }
 
 export type { GroupFormProps, FormProps }
