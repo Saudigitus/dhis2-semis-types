@@ -41,6 +41,7 @@ export interface CustomAttributeProps {
     value?: string
     class?: string
     initialOptions?: any
+    radio?: boolean
 }
 
 export interface OptionsProps {
