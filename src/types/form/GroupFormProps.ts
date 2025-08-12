@@ -8,6 +8,7 @@ interface GroupFormProps {
     onInputChange?: (e: any) => void
     trackedEntity?: string
     storyBook?: boolean
+    visible?: boolean 
     fieldsOrientation?: "horizontal" | "vertical"
 }
 
