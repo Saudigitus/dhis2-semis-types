@@ -90,6 +90,7 @@ interface FormProps {
      * @type {?boolean}
      */
     withButtons?: boolean
+    formValues?: Record<string, any>
     setFormValues?: (e: any) => void;
     onFormBlur?: (e: any) => void
     CustomControls?: Element
