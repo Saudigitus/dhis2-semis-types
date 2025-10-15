@@ -9,6 +9,8 @@ import { EnrollmentStatus } from "./types/api/WithRegistrationTypes"
 import { TableDataRefetch } from "./atoms/Refetch"
 import { Modules } from "./types/variables/SemisTypes"
 
+export type { SchoolCalendarDataStoreRecord, ClassPeriodType, HolidayType, SchoolCalendar, SchoolCalendarType } from "./types/dataStore/schoolCalendar"
+
 export { TableDataRefetch }
 
 export { VariablesTypes, EnrollmentStatus, Attribute, Modules }

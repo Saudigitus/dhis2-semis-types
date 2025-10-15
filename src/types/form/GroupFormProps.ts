@@ -7,7 +7,9 @@ interface GroupFormProps {
     form?: any
     onInputChange?: (e: any) => void
     trackedEntity?: string
-    storyBook: boolean
+    storyBook?: boolean
+    visible?: boolean 
+    fieldsOrientation?: "horizontal" | "vertical"
 }
 
 interface FormProps {
@@ -88,7 +90,10 @@ interface FormProps {
      * @type {?boolean}
      */
     withButtons?: boolean
+    formValues?: Record<string, any>
     setFormValues?: (e: any) => void;
+    onFormBlur?: (e: any) => void
+    CustomControls?: Element
 }
 
 export type { GroupFormProps, FormProps }

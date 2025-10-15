@@ -1,0 +1,56 @@
+interface defaults {
+    academicYear: string
+}
+
+interface ClassPeriodType {
+    key: string
+    description: string
+    endDate: string
+    startDate: string
+}
+
+interface HolidayType {
+    date: Date
+    event: string
+    type: string
+}
+
+type SchoolCalendarType = {
+    academicYear: {
+        "endDate": string
+        "startDate": string
+        "code": string
+        "label": string
+        "description": string
+        "type": string
+    }
+    classPeriods: ClassPeriodType[]
+    holidays: HolidayType[]
+    weekDays: {
+        "friday": boolean
+        "monday": boolean
+        "saturday": boolean
+        "sunday": boolean
+        "thursday": boolean
+        "tuesday": boolean
+        "wednesday": boolean
+    }
+}
+interface SchoolCalendar {
+    id: string
+    key: string
+    academicYear: string,
+    defaults: defaults,
+    schoolCalendar: SchoolCalendarType
+    
+}
+
+interface SchoolCalendarDataStoreRecord {
+    academicYear: string
+    defaults: {
+        academicYear: string
+    },
+    schoolCalendar: SchoolCalendarType[]
+}
+
+export type { SchoolCalendarDataStoreRecord, ClassPeriodType, HolidayType, SchoolCalendar, SchoolCalendarType }
