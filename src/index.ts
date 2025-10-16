@@ -8,8 +8,8 @@ import { FormatResponseRowsProps, RowsDataProps } from './types/common/FormatRow
 import { EnrollmentStatus } from "./types/api/WithRegistrationTypes"
 import { TableDataRefetch } from "./atoms/Refetch"
 import { Modules } from "./types/variables/SemisTypes"
-
-export type { SchoolCalendarDataStoreRecord, ClassPeriodType, HolidayType, SchoolCalendar, SchoolCalendarType } from "./types/dataStore/schoolCalendar"
+import { SchoolCalendarType} from "./types/calendar/calendar"
+export type { SchoolCalendarDataStoreRecord, ClassPeriodType, HolidayType, SchoolCalendar } from "./types/dataStore/schoolCalendar"
 
 export { TableDataRefetch }
 
@@ -26,7 +26,9 @@ export type {
     programStageDataElements,
     selectedDataStoreKey,
     FormatResponseRowsProps,
-    RowsDataProps
+    RowsDataProps,
+    SchoolCalendarType
+    
 }
 
 export { dataStoreSchema }
