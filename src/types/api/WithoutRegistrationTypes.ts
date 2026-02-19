@@ -1,6 +1,26 @@
 interface EventQueryProps {
     page?: number
     pageSize?: number
+    orgUnitMode?: string
+    program: string
+    order?: string
+    programStage?: string
+    orgUnit?: string
+    filter?: string[]
+    filterAttributes?: string[]
+    trackedEntities?: string
+    occurredAfter?: string
+    occurredBefore?: string
+    fields?: string
+    paging?: boolean
+    enrollment?: string
+    totalPages?: boolean
+    enrollmentStatus?: string
+}
+
+interface OldEventQueryProps {
+    page?: number
+    pageSize?: number
     ouMode?: string
     program: string
     order?: string
@@ -58,4 +78,4 @@ interface CreateEventProps {
 }
 
 
-export type { EventQueryProps, EventQueryResults, DataValuesProps, TransferQueryResults, AttendanceQueryResults, CreateEventProps }
+export type { EventQueryProps, OldEventQueryProps, EventQueryResults, DataValuesProps, TransferQueryResults, AttendanceQueryResults, CreateEventProps }

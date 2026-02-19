@@ -10,12 +10,23 @@ import { TableDataRefetch } from "./atoms/Refetch"
 import { Modules } from "./types/variables/SemisTypes"
 import { SchoolCalendarType } from "./types/calendar/calendar"
 import { D2I18n } from './types/i18n/i18n'
+import { EventQueryProps, OldEventQueryProps, EventQueryResults, DataValuesProps, TransferQueryResults, AttendanceQueryResults, CreateEventProps } from "./types/api/WithoutRegistrationTypes"
 
 export type { SchoolCalendarDataStoreRecord, ClassPeriodType, HolidayType, SchoolCalendar } from "./types/dataStore/schoolCalendar"
 
 export { TableDataRefetch }
 
 export { VariablesTypes, EnrollmentStatus, Attribute, Modules }
+
+export type {
+    EventQueryProps,
+    OldEventQueryProps,
+    EventQueryResults,
+    DataValuesProps,
+    TransferQueryResults,
+    AttendanceQueryResults,
+    CreateEventProps
+}
 
 export type {
     FormProps,
