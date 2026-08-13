@@ -2,9 +2,9 @@ import z from "zod";
 
 const identityBadgeSchema = z.object({
     order: z.number(),
-    source: z.enum(["FINAL_RESULT_STATUS", "ATTRIBUTE"]),
+    source: z.enum(["DATA_ELEMENTS", "ATTRIBUTE"]),
     styled: z.boolean(),
-    attribute: z.string().optional(),
+    variable: z.string().optional(),
 });
 
 const identityPhotoSchema = z.object({
