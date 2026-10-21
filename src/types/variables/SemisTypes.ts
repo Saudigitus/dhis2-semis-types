@@ -3,5 +3,6 @@ export enum Modules {
     Performance = "performance",
     Final_Result = "final-result",
     Transfer = "transfer",
-    Attendance = "attendance"
+    Attendance = "attendance",
+    Transfer_Execute = "transfer-execute"
 }
