@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { profileConfigSchema } from "./profileConfig";
 
 const attendanceStatusOptionSchema = z.object({
     code: z.string(),
@@ -53,7 +52,6 @@ const transferStatusOptionSchema = z.object({
 const transferSchema = z.object({
     destinySchool: z.string(),
     programStage: z.string(),
-    originSchool: z.string(),
     status: z.string(),
     key: z.string().optional(),
     statusOptions: z.array(transferStatusOptionSchema)
@@ -82,6 +80,5 @@ export const staffDataStore = z.object({
     registration: registrationSchema,
     "socio-economics": socioEconomicsSchema,
     trackedEntityType: z.string(),
-    transfer: transferSchema,
-    profile: profileConfigSchema
+    transfer: transferSchema
 });
