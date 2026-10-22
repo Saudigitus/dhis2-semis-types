@@ -61,7 +61,6 @@ const transferStatusOptionSchema = z.object({
 
 const transferSchema = z.object({
     destinySchool: z.string(),
-    originSchool: z.string(),
     programStage: z.string(),
     status: z.string(),
     key: z.string().optional(),
